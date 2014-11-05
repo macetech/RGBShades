@@ -6,6 +6,9 @@
 //   Use Version 3.0 or later https://github.com/FastLED/FastLED
 //   ZIP file https://github.com/FastLED/FastLED/archive/master.zip
 //
+//   Use Arduino IDE 1.0 or later
+//   Select device "Arduino Pro or Pro Mini (5V, 16MHz) w/ATmega328
+//
 //   [Press] the SW1 button to cycle through available effects
 //   Effects will also automatically cycle at startup
 //   [Press and hold] the SW1 button (one second) to switch between auto and manual mode
