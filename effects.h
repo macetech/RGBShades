@@ -247,4 +247,69 @@ void slantBars() {
   slantPos-=4;
 
 }
-
+//leds run around the periphery of the shades, changing color every go 'round
+boolean erase = false;
+uint8_t x,y = 0;
+void shadesOutline(){
+  //startup tasks
+    if (effectInit == false) {
+    effectInit = true;
+    erase = false;
+    uint8_t x=0;
+    effectDelay = 15; 
+    FastLED.clear();
+    currentPalette = RainbowColors_p;}
+  const uint8_t OutlineTable[] = {
+     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 43,
+     44, 67, 66, 65, 64, 63, 50, 37, 21, 22, 36, 51, 62, 61, 60, 59,
+     58, 57, 30, 29};
+    leds[OutlineTable[x]] = currentPalette[currentColor];
+  if (erase)
+    leds[OutlineTable[x]] = CRGB::Black;
+   x++; 
+  if (x == (sizeof(OutlineTable))) {
+    erase = !erase;
+    x = 0;
+   currentColor += random8(3,6);
+   if (currentColor > 15) currentColor -= 16;  
+  } 
+}
+//hearts that start small on the bottom and get larger as they grow upward
+const uint8_t SmHeart[] = {46, 48, 53, 55, 60, 65};
+const uint8_t MedHeart[] = {31, 32, 34, 35, 38, 39, 
+   41, 42, 46, 47, 48, 55, 54, 53, 54, 55, 60, 65};
+const uint8_t LrgHeart[] = {15, 16, 18, 19, 24, 25, 
+   27, 28, 31, 32, 33, 34, 35, 38, 39, 40, 41, 42, 
+   46, 47, 48, 53, 54, 55, 60, 65};
+const uint8_t HugeHeart[] = {0, 1, 3, 4, 9, 10, 12, 
+   13, 14, 15, 16, 17, 18, 19, 20, 23, 24, 25, 26, 
+   27, 28, 29, 31, 32, 33, 34, 35, 38, 39, 40, 41, 
+   42, 46, 47, 48, 53, 54, 55, 60, 65};
+void hearts() {
+   if (effectInit == false) {
+    effectInit = true;
+    effectDelay = 250; 
+    FastLED.clear();
+   int x = 0;
+   int y = 0;
+    }
+    effectDelay = 250;
+    if (y==5)
+     y = 0;
+    if (y == 0)
+     for (x = 0; x < 6; x++)
+      leds[SmHeart[x]] = CRGB::Salmon; //Tried to transition from pink-ish to red. Kinda worked.
+    if (y == 1)
+     for (x = 0; x < 18; x++) 
+      leds[MedHeart[x]] = CRGB::Tomato;
+    if (y == 2)
+     for (x = 0; x < 26; x++)
+      leds[LrgHeart[x]] = CRGB::Crimson;
+    if (y == 3){
+     for (x = 0; x < 40; x++)
+      leds[HugeHeart[x]] = CRGB::Red;
+      effectDelay = 450;} //set the delay slightly longer for HUGE heart.
+    if (y == 4)
+     FastLED.clear();
+  y++;
+}

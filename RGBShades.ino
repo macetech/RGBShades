@@ -62,7 +62,9 @@ functionList effectList[] = {threeSine,
                              glitter,
                              slantBars,
                              colorFill,
-                             sideRain };
+                             sideRain, 
+                             shadesOutline,
+                             hearts};
 
 // Timing parameters
 #define cycleTime 15000
