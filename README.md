@@ -1,3 +1,5 @@
+Pull Requests - For new effects, please target the "experimental" branch. We'll try to throw everything in experimental, and bubble finished effects into the master branch.
+
 RGBShades
 =========
 
