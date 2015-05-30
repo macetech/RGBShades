@@ -13,8 +13,13 @@ void threeSine() {
   // startup tasks
   if (effectInit == false) {
     effectInit = true;
-    effectDelay = 20;
+	if(doHueSubsection)//Pause the effect to show the last saved hue amount
+	{
+		effectDelay = 600;
+		return;
+	}
   }
+  effectDelay = 20;
 
   // Draw one frame of the animation into the LED array
   for (byte x = 0; x < kMatrixWidth; x++) {
@@ -57,7 +62,7 @@ void plasma() {
   for (int x = 0; x < kMatrixWidth; x++) {
     for (int y = 0; y < kMatrixHeight; y++) {
       byte color = sin8(sqrt(sq(((float)x-7.5)*10+xOffset-127)+sq(((float)y-2)*10+yOffset-127))+offset);
-      leds[XY(x,y)] = CHSV(color, 255, 255);
+      leds[XY(x,y)] = SectionCHSV(color, 255, 255);
     }    
   }
 
@@ -83,7 +88,7 @@ void rider() {
     int brightness = abs(x*(256/kMatrixWidth) - triwave8(riderPos)*2 + 127)*3;
     if (brightness > 255) brightness = 255;
     brightness = 255 - brightness;
-    CRGB riderColor = CHSV(cycleHue, 255, brightness);
+    CRGB riderColor = SectionCHSV(cycleHue, 255, brightness);
     for (byte y = 0; y < kMatrixHeight; y++) {
       leds[XY(x,y)] = riderColor;
     }
@@ -107,7 +112,7 @@ void glitter() {
   // Draw one frame of the animation into the LED array
   for (int x = 0; x < kMatrixWidth; x++) {
     for (int y = 0; y <kMatrixHeight; y++) {
-      leds[XY(x,y)] = CHSV(cycleHue,255,random8(5)*63);
+      leds[XY(x,y)] = SectionCHSV(cycleHue,255,random8(5)*63);
     }
   }
 
@@ -118,6 +123,7 @@ void glitter() {
 byte currentColor = 0;
 byte currentRow = 0;
 byte currentDirection = 0;
+CRGB selectedColor = 0;
 void colorFill() {
   
   // startup tasks
@@ -129,6 +135,10 @@ void colorFill() {
     currentDirection = 0;
     currentPalette = RainbowColors_p;
   }
+  if (!doHueSubsection)
+	  selectedColor = currentPalette[currentColor];
+  else
+	  selectedColor = SectionCHSV(currentColor * 16, 255, 255);
 
   // test a bitmask to fill up or down when currentDirection is 0 or 2 (0b00 or 0b10)
   if (!(currentDirection & 1)) {
@@ -136,7 +146,7 @@ void colorFill() {
     for (byte x = 0; x < kMatrixWidth; x++) {
       byte y = currentRow;
       if (currentDirection == 2) y = kMatrixHeight - 1 - currentRow;
-      leds[XY(x,y)] = currentPalette[currentColor];
+      leds[XY(x,y)] = selectedColor;
     }
   } 
 
@@ -146,7 +156,7 @@ void colorFill() {
     for (byte y = 0; y < kMatrixHeight; y++) {
       byte x = currentRow;
       if (currentDirection == 3) x = kMatrixWidth - 1 - currentRow;
-      leds[XY(x,y)] = currentPalette[currentColor];
+      leds[XY(x,y)] = selectedColor;
     }
   }
 
@@ -204,7 +214,7 @@ void sideRain() {
   scrollArray(rainDir);
   byte randPixel = random8(kMatrixHeight);
   for (byte y = 0; y < kMatrixHeight; y++) leds[XY((kMatrixWidth-1) * rainDir,y)] = CRGB::Black;
-  leds[XY((kMatrixWidth-1)*rainDir, randPixel)] = CHSV(cycleHue, 255, 255); 
+  leds[XY((kMatrixWidth-1)*rainDir, randPixel)] = SectionCHSV(cycleHue, 255, 255); 
 
 }
 
@@ -221,7 +231,10 @@ void confetti() {
 
   // scatter random colored pixels at several random coordinates
   for (byte i = 0; i < 4; i++) {
-    leds[XY(random16(kMatrixWidth),random16(kMatrixHeight))] = ColorFromPalette(currentPalette, random16(255), 255);//CHSV(random16(255), 255, 255);
+	if (!doHueSubsection)
+      leds[XY(random16(kMatrixWidth),random16(kMatrixHeight))] = ColorFromPalette(currentPalette, random16(255), 255);
+    else
+	  leds[XY(random16(kMatrixWidth), random16(kMatrixHeight))] = SectionCHSV(random16(255), 255, 255);
     random16_add_entropy(1);
   }
    
@@ -240,7 +253,7 @@ void slantBars() {
 
   for (byte x = 0; x < kMatrixWidth; x++) {
     for (byte y = 0; y < kMatrixHeight; y++) {
-      leds[XY(x,y)] = CHSV(cycleHue, 255, quadwave8(x*32+y*32+slantPos));
+      leds[XY(x,y)] = SectionCHSV(cycleHue, 255, quadwave8(x*32+y*32+slantPos));
     }
   }
 
@@ -263,7 +276,10 @@ void shadesOutline(){
      0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 43,
      44, 67, 66, 65, 64, 63, 50, 37, 21, 22, 36, 51, 62, 61, 60, 59,
      58, 57, 30, 29};
+  if (!doHueSubsection)
     leds[OutlineTable[x]] = currentPalette[currentColor];
+  else
+	leds[OutlineTable[x]] = SectionCHSV(currentColor * 16, 255, 255);
   if (erase)
     leds[OutlineTable[x]] = CRGB::Black;
    x++; 
@@ -298,18 +314,62 @@ void hearts() {
      y = 0;
     if (y == 0)
      for (x = 0; x < 6; x++)
-      leds[SmHeart[x]] = CRGB::Salmon; //Tried to transition from pink-ish to red. Kinda worked.
+      leds[SmHeart[x]] = SectionCHSV(0, 255, 255);
     if (y == 1)
      for (x = 0; x < 18; x++) 
-      leds[MedHeart[x]] = CRGB::Tomato;
+      leds[MedHeart[x]] = SectionCHSV(42, 255, 255);
     if (y == 2)
      for (x = 0; x < 26; x++)
-      leds[LrgHeart[x]] = CRGB::Crimson;
+      leds[LrgHeart[x]] = SectionCHSV(84, 255, 255);
     if (y == 3){
      for (x = 0; x < 40; x++)
-      leds[HugeHeart[x]] = CRGB::Red;
+      leds[HugeHeart[x]] = SectionCHSV(126, 255, 255);
       effectDelay = 450;} //set the delay slightly longer for HUGE heart.
     if (y == 4)
      FastLED.clear();
   y++;
 }
+
+//Blasts a hue over all LEDs, the color when the effect ends becomes the start hue for all other effects
+void pickHueStartColor() {
+  // startup tasks
+  if (effectInit == false) {
+    effectInit = true;
+    effectDelay = 15;
+    doHueSubsection = true;
+  }
+  fillAll(SectionCHSV(0, 255, 255));
+  incrimentHueOffset(1);
+}
+
+//Left to right rainbow, when the effect is over, the length of the hue shift is used to limit hue in all other effects
+void pickHueAmount()
+{
+  // startup tasks
+  if (effectInit == false) {
+    effectInit = true;
+    //Add a delay here for a moment to verify settings
+    effectDelay = 300;
+    return;
+  }
+  effectDelay = 40;//Speed back to normal
+
+  incrimentHueAmmount(1);
+  byte maxLeds = kMatrixHeight * kMatrixWidth;
+  //Loop left to right over each led
+  for (byte y = 0; y < kMatrixHeight; y++) {
+    for (byte x = 0; x < (kMatrixWidth - 0); x++) {
+      byte number = (x*kMatrixHeight) + y;
+      //Draw a led of the hue of the max value if the division of hue had stopped there
+      if ((hueAmmount) >(number * (255 / maxLeds)))
+      {
+        leds[XY(x, y)] = CHSV(((255. * number) / maxLeds) + hueOffset, 255, 255);
+      }
+      else
+      {
+        leds[XY(x, y)] = SectionCHSV(0, 0, 0);
+      }
+    }
+  }
+}
+

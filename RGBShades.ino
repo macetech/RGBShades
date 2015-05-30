@@ -64,7 +64,9 @@ functionList effectList[] = {threeSine,
                              colorFill,
                              sideRain, 
                              shadesOutline,
-                             hearts};
+                             hearts,
+							 pickHueStartColor,
+							 pickHueAmount};
 
 // Timing parameters
 #define cycleTime 15000
