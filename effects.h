@@ -30,8 +30,20 @@ void threeSine() {
       byte sinDistanceR = qmul8(abs(y*(255/kMatrixHeight) - sin8(sineOffset*9+x*16)),2);
       byte sinDistanceG = qmul8(abs(y*(255/kMatrixHeight) - sin8(sineOffset*10+x*16)),2);
       byte sinDistanceB = qmul8(abs(y*(255/kMatrixHeight) - sin8(sineOffset*11+x*16)),2);
-
-      leds[XY(x,y)] = CRGB(255-sinDistanceR, 255-sinDistanceG, 255-sinDistanceB); 
+      
+      if(doHueSubsection)
+      {
+        CRGB firstColor  = SectionCHSV(0, 255, 255);
+        CRGB secondColor = SectionCHSV(85, 255, 255);
+        CRGB thirdColor  = SectionCHSV(170, 255, 255);
+        leds[XY(x,y)] = 
+          firstColor.nscale8(255-sinDistanceR) +
+          secondColor.nscale8(255-sinDistanceG) +
+          thirdColor.nscale8(255-sinDistanceB);
+      }else
+      {
+        leds[XY(x,y)] = CRGB(255-sinDistanceR, 255-sinDistanceG, 255-sinDistanceB);
+      } 
     }
   }
   
@@ -187,9 +199,9 @@ void threeDee() {
    for (byte x = 0; x < kMatrixWidth; x++) {
      for (byte y = 0; y < kMatrixHeight; y++) {
        if (x < 7) {
-         leds[XY(x,y)] = CRGB::Blue;
+         leds[XY(x,y)] = SectionCHSV(170, 255, 255);
        } else if (x > 8) {
-         leds[XY(x,y)] = CRGB::Red;
+         leds[XY(x,y)] = SectionCHSV(0, 255, 255);
        } else {
          leds[XY(x,y)] = CRGB::Black;
        }
