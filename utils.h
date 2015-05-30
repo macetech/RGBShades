@@ -25,6 +25,36 @@ void hueCycle(byte incr) {
     cycleHue+=incr;
 }
 
+/* Instead of a perpetually incrimenting hue, override hue calculations to instead do a
+ * sinusodial loop back and forth over a smaller section of the scale.
+ * This can allow various effects, ice, hue, or even single colors.
+ * If the hue ammount is close to max, switch back to an incrimental mode and allow pallets
+ * to be used again.  Continually incrimenting the offset and ammount allows the autoCycle
+ * mode to keep making new sections.
+ */
+//Keep making new effects.
+byte hueOffset = 0;//The start hue for our cycle
+byte hueAmmountIncrimentor = 0;//incrimentor for generating the hueAmmount
+byte hueAmmount = 1;//The distance across the hue scale to allow sliding
+bool doHueSubsection = false;//Switch to go back to a continuous hue slide (no more back & forth)
+CHSV SectionCHSV(uint8_t h, uint8_t s, uint8_t v)
+{
+	//return a hue from a sinusodial wave across our current section of the hue scale
+	if (doHueSubsection)return CHSV((quadwave8(h) / (255. / hueAmmount)) + hueOffset, s, v);
+	return CHSV(h, s, v);
+}
+void incrimentHueOffset(uint8_t offset)
+{
+	hueOffset += offset;
+}
+void incrimentHueAmmount(uint8_t offset)
+{
+	hueAmmountIncrimentor += offset;
+	//Don't actually increase it till it loops to 0, instead make it go up, then back down.
+	hueAmmount = triwave8(hueAmmountIncrimentor);
+	doHueSubsection = hueAmmount < 230;//If the hue amount is almost a full rainbow, make it a full rainbow to allow pallet effects and others
+}
+
 // Set every LED in the array to a specified color
 void fillAll(CRGB fillColor) {
   for (byte i = 0; i < NUM_LEDS; i++) {
