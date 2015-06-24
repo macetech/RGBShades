@@ -94,7 +94,7 @@ void loop()
   switch(buttonStatus(1)) {
     
     case BTNRELEASED: // button was pressed and released quickly
-      currentBrightness += 16; // increase the brightness (wraps to lowest)
+      currentBrightness += 51; // increase the brightness (wraps to lowest)
       FastLED.setBrightness(scale8(currentBrightness,MAXBRIGHTNESS));
     break;
     
