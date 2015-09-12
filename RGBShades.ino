@@ -7,7 +7,16 @@
 //   ZIP file https://github.com/FastLED/FastLED/archive/master.zip
 //
 //   Use Arduino IDE 1.0 or later
-//   Select device "Arduino Pro or Pro Mini (5V, 16MHz) w/ATmega328
+//
+//   If your RGB Shades were purchased before July 2015:
+//     This version has the standard Arduino bootloader. R9 and R10 near the control buttons will be present.
+//     Select the “Arduino Pro or Pro Mini” option.
+//     Then, go back into the Tools menu and find the Processor option and select “ATmega328 (5V, 16MHz)”.
+//
+//   If your RGB Shades were purchased after July 2015:
+//     This version has the Optiboot bootloader. R9 and 10 near the control buttons will be missing.
+//     Select the “Arduino Mini” option.
+//     Then, go back into the Tools menu and find the Processor option and select “ATmega328”.
 //
 //   [Press] the SW1 button to cycle through available effects
 //   Effects will also automatically cycle at startup
