@@ -56,6 +56,7 @@ void setup() {
 // list of functions that will be displayed
 functionList effectList[] = {threeSine,
                              threeDee,
+                             threeDeeBlink,
                              plasma,
                              confetti,
                              rider,
@@ -64,6 +65,7 @@ functionList effectList[] = {threeSine,
                              colorFill,
                              sideRain, 
                              shadesOutline,
+                             shadesOutlineChase,
                              hearts};
 
 // Timing parameters

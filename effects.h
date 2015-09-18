@@ -191,6 +191,44 @@ void threeDee() {
 
 }
 
+uint8_t threeDeeBlinkState = 0;
+// Just like threeDee, except it flip-flops red/blue rapidly
+void threeDeeBlink() {
+  // startup tasks
+  if (effectInit == false) {
+    effectInit = true;
+    effectDelay = 100;
+  }
+
+  CRGB left;
+  CRGB right;
+
+  if (threeDeeBlinkState == 0) {
+    left = CRGB::Red;
+    right = CRGB::Blue;
+  } else {
+    left = CRGB::Blue;
+    right = CRGB::Red;
+  }
+
+  for (byte x = 0; x < kMatrixWidth; x++) {
+    for (byte y = 0; y < kMatrixHeight; y++) {
+      if (x < 7) {
+        leds[XY(x, y)] = left;
+      } else if (x > 8) {
+        leds[XY(x, y)] = right;
+      } else {
+        leds[XY(x, y)] = CRGB::Black;
+      }
+    }
+  }
+
+  leds[XY(6, 0)] = CRGB::Black;
+  leds[XY(9, 0)] = CRGB::Black;
+
+  threeDeeBlinkState = (threeDeeBlinkState + 1) % 2;
+}
+
 // Random pixels scroll sideways, uses current hue
 #define rainDir 0
 void sideRain() {
@@ -247,6 +285,15 @@ void slantBars() {
   slantPos-=4;
 
 }
+
+
+// Used for both shadesOutline and shadesOutlineChase
+const uint8_t OutlineTable[] = {
+   0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 43,
+   44, 67, 66, 65, 64, 63, 50, 37, 21, 22, 36, 51, 62, 61, 60, 59,
+   58, 57, 30, 29};
+const uint8_t outlineTableLen = 36;
+
 //leds run around the periphery of the shades, changing color every go 'round
 boolean erase = false;
 uint8_t x,y = 0;
@@ -259,10 +306,6 @@ void shadesOutline(){
     effectDelay = 15; 
     FastLED.clear();
     currentPalette = RainbowColors_p;}
-  const uint8_t OutlineTable[] = {
-     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 43,
-     44, 67, 66, 65, 64, 63, 50, 37, 21, 22, 36, 51, 62, 61, 60, 59,
-     58, 57, 30, 29};
     leds[OutlineTable[x]] = currentPalette[currentColor];
   if (erase)
     leds[OutlineTable[x]] = CRGB::Black;
@@ -274,6 +317,34 @@ void shadesOutline(){
    if (currentColor > 15) currentColor -= 16;  
   } 
 }
+
+// Like shadesOutline, except the light trail has a set length instead of
+// looping all the way around the glasses
+uint8_t pos, toOn, toOff;
+const uint8_t gapLen = 24;  // The number of dark pixels around the outline
+void shadesOutlineChase() {
+  if (effectInit == false) {
+    effectInit = true;
+    erase = false;
+    effectDelay = 20;
+    pos = 0;
+    FastLED.clear();
+    currentPalette = PartyColors_p;
+    for (uint8_t i = 0; i < outlineTableLen; i++) {
+      leds[OutlineTable[i]] == currentPalette[currentColor];
+    }
+  }
+
+  toOff = pos;
+  toOn = (pos + outlineTableLen - gapLen) % outlineTableLen;
+
+  leds[OutlineTable[toOff]] = CRGB::Black;
+  leds[OutlineTable[toOn]] = currentPalette[currentColor];
+
+  pos = (pos + 1) % outlineTableLen;
+  currentColor = (currentColor + 1) % 16;
+}
+
 //hearts that start small on the bottom and get larger as they grow upward
 const uint8_t SmHeart[] = {46, 48, 53, 55, 60, 65};
 const uint8_t MedHeart[] = {31, 32, 34, 35, 38, 39, 
