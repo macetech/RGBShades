@@ -35,9 +35,6 @@ void threeSine() {
 }
 
 
-
-
-
 // RGB Plasma
 byte offset  = 0; // counter for radial color wave motion
 int plasVector = 0; // counter for orbiting plasma center
@@ -277,7 +274,7 @@ void scrollText(byte message, byte style, CRGB fgColor, CRGB bgColor) {
 
   paletteCycle += 15;
 
-  if (currentCharColumn < 5) {
+  if (currentCharColumn < 5) { // characters are 5 pixels wide
     bitBuffer[(bitBufferPointer + kMatrixWidth - 1) % kMatrixWidth] = charBuffer[currentCharColumn]; // character
   } else {
     bitBuffer[(bitBufferPointer + kMatrixWidth - 1) % kMatrixWidth] = 0; // space
@@ -285,7 +282,7 @@ void scrollText(byte message, byte style, CRGB fgColor, CRGB bgColor) {
 
   CRGB pixelColor;
   for (byte x = 0; x < kMatrixWidth; x++) {
-    for (byte y = 0; y < 5; y++) {
+    for (byte y = 0; y < 5; y++) { // characters are 5 pixels tall
       if (bitRead(bitBuffer[(bitBufferPointer + x) % kMatrixWidth], y) == 1) {
         if (style == RAINBOW) {
           pixelColor = ColorFromPalette(currentPalette, paletteCycle+y*16, 255);
