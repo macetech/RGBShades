@@ -91,7 +91,6 @@ void selectRandomPalette() {
     break;
   }
 
-
 }
 
 void drawMeter(int step){
@@ -138,8 +137,6 @@ void confirmBlink() {
 
 }
 
-
-
 // Determine flash address of text string
 unsigned int currentStringAddress = 0;
 void selectFlashString(byte string) {
@@ -161,10 +158,10 @@ void loadCharBuffer(byte character) {
   for (byte i = 0; i < 5; i++) {
     charBuffer[i] = pgm_read_byte(Font[mappedCharacter]+i);
   }
+  
 }
 
 // Fetch a character value from a text string in flash
 char loadStringChar(byte string, byte character) {
   return (char) pgm_read_byte(currentStringAddress + character);
-;
 }
