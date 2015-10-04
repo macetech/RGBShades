@@ -69,28 +69,28 @@ void setup() {
 void serialEvent(){
   if(Serial.available() == 0) return;
   for (byte i = 0; i < sizeof(messageBuffer); i++) messageBuffer[i] = 0;
-  messageLen = Serial.available();
   Serial.readBytesUntil('\n', messageBuffer, sizeof(messageBuffer));
-  Serial.println(messageLen);
-  Serial.println(messageBuffer);
+  effectInit = false;
 }
 
 
 // list of functions that will be displayed
-functionList effectList[] = {threeSine,
-                             threeDee,
-                             scrollTextZero,
-                             plasma,
-                             confetti,
-                             rider,
+functionList effectList[] = {//threeSine,
+                             //threeDee,
+                             //scrollTextZero,
+                             //plasma,
+                             //confetti,
+                             //rider,
                              scrollTextOne,
-                             glitter,
-                             slantBars,
-                             scrollTextTwo,
-                             colorFill,
-                             sideRain, 
-                             shadesOutline,
-                             hearts};
+                             scrollTextSerial,
+                             //glitter,
+                             //slantBars,
+                             //scrollTextTwo,
+                             //colorFill,
+                             //sideRain, 
+                             //shadesOutline,
+                             //hearts
+                           };
 
 // Timing parameters
 #define cycleTime 15000
@@ -122,7 +122,7 @@ void loop()
   switch(buttonStatus(1)) {
     
     case BTNRELEASED: // button was pressed and released quickly
-      currentBrightness += 51; // increase the brightness (wraps to lowest)
+      currentBrightness += 16; // increase the brightness (wraps to lowest)
       FastLED.setBrightness(scale8(currentBrightness,MAXBRIGHTNESS));
       drawMeter(currentBrightness/16);
     break;
@@ -133,7 +133,7 @@ void loop()
       drawMeter(currentBrightness/16);
     break;
   
-  }
+  } 
   
   // switch to a new effect every cycleTime milliseconds
   if (currentMillis - cycleMillis > cycleTime && autoCycle == true) {

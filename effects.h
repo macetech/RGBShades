@@ -248,7 +248,7 @@ void slantBars() {
 
 #define NORMAL 0
 #define RAINBOW 1
-#define charSpacing 2
+#define charSpacing 1
 // Scroll a text string
 void scrollText(byte message, byte style, CRGB fgColor, CRGB bgColor) {
   static byte currentMessageChar = 0;
@@ -257,24 +257,26 @@ void scrollText(byte message, byte style, CRGB fgColor, CRGB bgColor) {
   static CRGB currentColor;
   static byte bitBuffer[16] = {0};
   static byte bitBufferPointer = 0;
-
+  static int charWidth;
 
   // startup tasks
   if (effectInit == false) {
     effectInit = true;
-    effectDelay = 35;
+    effectDelay = 100;
     currentMessageChar = 0;
     currentCharColumn = 0;
     selectFlashString(message);
     loadCharBuffer(loadStringChar(message, currentMessageChar));
+    charWidth = loadCharWidth(loadStringChar(message, currentMessageChar));
+    Serial.print("Initialization charWidth: ");
+    Serial.println(charWidth);
     currentPalette = RainbowColors_p;
     for (byte i = 0; i < kMatrixWidth; i++) bitBuffer[i] = 0;
   }
 
-
   paletteCycle += 15;
 
-  if (currentCharColumn < 5) { // characters are 5 pixels wide
+  if (currentCharColumn < charWidth) { // character bitfields are charwidth pixels wide
     bitBuffer[(bitBufferPointer + kMatrixWidth - 1) % kMatrixWidth] = charBuffer[currentCharColumn]; // character
   } else {
     bitBuffer[(bitBufferPointer + kMatrixWidth - 1) % kMatrixWidth] = 0; // space
@@ -297,7 +299,7 @@ void scrollText(byte message, byte style, CRGB fgColor, CRGB bgColor) {
   }
 
   currentCharColumn++;
-  if (currentCharColumn > (4 + charSpacing)) {
+  if (currentCharColumn > ((charWidth - 1) + charSpacing)) {
     currentCharColumn = 0;
     currentMessageChar++;
     char nextChar = loadStringChar(message, currentMessageChar);
@@ -306,6 +308,7 @@ void scrollText(byte message, byte style, CRGB fgColor, CRGB bgColor) {
       nextChar = loadStringChar(message, currentMessageChar);
     }
     loadCharBuffer(nextChar);
+    charWidth = loadCharWidth(nextChar);
   }
 
   bitBufferPointer++;
@@ -325,9 +328,17 @@ void scrollTextOne() {
 void scrollTextTwo() {
   scrollText(2, NORMAL, CRGB::Green, CRGB(0,0,8));
 }
+
+void scrollTextSerial(){
+  scrollText(255, NORMAL, CRGB::DarkRed, CRGB::DarkBlue);
+}
 //leds run around the periphery of the shades, changing color every go 'round
 boolean erase = false;
 uint8_t x,y = 0;
+const uint8_t OutlineTable[] = {
+     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 43,
+     44, 67, 66, 65, 64, 63, 50, 37, 21, 22, 36, 51, 62, 61, 60, 59,
+     58, 57, 30, 29};
 void shadesOutline(){
   //startup tasks
     if (effectInit == false) {
@@ -337,10 +348,7 @@ void shadesOutline(){
     effectDelay = 15; 
     FastLED.clear();
     currentPalette = RainbowColors_p;}
-  const uint8_t OutlineTable[] = {
-     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 43,
-     44, 67, 66, 65, 64, 63, 50, 37, 21, 22, 36, 51, 62, 61, 60, 59,
-     58, 57, 30, 29};
+  
     leds[OutlineTable[x]] = currentPalette[currentColor];
   if (erase)
     leds[OutlineTable[x]] = CRGB::Black;
