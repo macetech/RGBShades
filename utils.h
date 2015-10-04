@@ -137,10 +137,14 @@ void confirmBlink() {
 
 }
 
+char messageBuffer[140];
+int messageLen = 0;
+
+
 // Determine flash address of text string
 unsigned int currentStringAddress = 0;
 void selectFlashString(byte string) {
-  currentStringAddress = pgm_read_word(&stringArray[string]);
+  // currentStringAddress = pgm_read_word(&stringArray[string]);
 }
 
 // Fetch font character bitmap from flash
@@ -163,5 +167,5 @@ void loadCharBuffer(byte character) {
 
 // Fetch a character value from a text string in flash
 char loadStringChar(byte string, byte character) {
-  return (char) pgm_read_byte(currentStringAddress + character);
+  return messageBuffer[character];
 }

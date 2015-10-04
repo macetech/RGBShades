@@ -62,8 +62,19 @@ void setup() {
   // configure input buttons
   pinMode(MODEBUTTON, INPUT_PULLUP);
   pinMode(BRIGHTNESSBUTTON, INPUT_PULLUP);
+  Serial.begin(9600);
 
 }
+
+void serialEvent(){
+  if(Serial.available() == 0) return;
+  for (byte i = 0; i < sizeof(messageBuffer); i++) messageBuffer[i] = 0;
+  messageLen = Serial.available();
+  Serial.readBytesUntil('\n', messageBuffer, sizeof(messageBuffer));
+  Serial.println(messageLen);
+  Serial.println(messageBuffer);
+}
+
 
 // list of functions that will be displayed
 functionList effectList[] = {threeSine,
