@@ -117,6 +117,14 @@ void confirmBlink() {
 
 }
 
+void lensMask(){
+  const int mask_leds[] = {5,6,7,8,21,22}; // The individual LEDs that make up the "nosebridge"
+  for(int i=0; i<sizeof(mask_leds); i++){
+    leds[mask_leds[i]] = CRGB::Black;
+  }
+}
+
+
 // Determine flash address of text string
 unsigned int currentStringAddress = 0;
 void selectFlashString(byte string) {
