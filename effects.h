@@ -34,10 +34,6 @@ void threeSine() {
 
 }
 
-
-
-
-
 // RGB Plasma
 byte offset  = 0; // counter for radial color wave motion
 int plasVector = 0; // counter for orbiting plasma center
@@ -312,4 +308,84 @@ void hearts() {
     if (y == 4)
      FastLED.clear();
   y++;
+}
+
+#define NORMAL 0
+#define RAINBOW 1
+#define charSpacing 2
+// Scroll a text string
+void scrollText(byte message, byte style, CRGB fgColor, CRGB bgColor) {
+  static byte currentMessageChar = 0;
+  static byte currentCharColumn = 0;
+  static byte paletteCycle = 0;
+  static CRGB currentColor;
+  static byte bitBuffer[16] = {0};
+  static byte bitBufferPointer = 0;
+
+
+  // startup tasks
+  if (effectInit == false) {
+    effectInit = true;
+    effectDelay = 35;
+    currentMessageChar = 0;
+    currentCharColumn = 0;
+    selectFlashString(message);
+    loadCharBuffer(loadStringChar(message, currentMessageChar));
+    currentPalette = RainbowColors_p;
+    for (byte i = 0; i < kMatrixWidth; i++) bitBuffer[i] = 0;
+  }
+
+
+  paletteCycle += 15;
+
+  if (currentCharColumn < 5) { // characters are 5 pixels wide
+    bitBuffer[(bitBufferPointer + kMatrixWidth - 1) % kMatrixWidth] = charBuffer[currentCharColumn]; // character
+  } else {
+    bitBuffer[(bitBufferPointer + kMatrixWidth - 1) % kMatrixWidth] = 0; // space
+  }
+
+  CRGB pixelColor;
+  for (byte x = 0; x < kMatrixWidth; x++) {
+    for (byte y = 0; y < 5; y++) { // characters are 5 pixels tall
+      if (bitRead(bitBuffer[(bitBufferPointer + x) % kMatrixWidth], y) == 1) {
+        if (style == RAINBOW) {
+          pixelColor = ColorFromPalette(currentPalette, paletteCycle+y*16, 255);
+        } else {
+          pixelColor = fgColor;
+        }
+      } else {
+        pixelColor = bgColor;
+      }
+      leds[XY(x, y)] = pixelColor;
+    }
+  }
+
+  currentCharColumn++;
+  if (currentCharColumn > (4 + charSpacing)) {
+    currentCharColumn = 0;
+    currentMessageChar++;
+    char nextChar = loadStringChar(message, currentMessageChar);
+    if (nextChar == 0) { // null character at end of strong
+      currentMessageChar = 0;
+      nextChar = loadStringChar(message, currentMessageChar);
+    }
+    loadCharBuffer(nextChar);
+  }
+
+  bitBufferPointer++;
+  if (bitBufferPointer > 15) bitBufferPointer = 0;
+
+}
+
+
+void scrollTextZero() {
+  scrollText(0, NORMAL, CRGB::Red, CRGB::Black);
+}
+
+void scrollTextOne() {
+  scrollText(1, RAINBOW, 0, CRGB::Black);
+}
+
+void scrollTextTwo() {
+  scrollText(2, NORMAL, CRGB::Green, CRGB(0,0,8));
 }
