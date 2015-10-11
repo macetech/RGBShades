@@ -93,6 +93,26 @@ void selectRandomPalette() {
 
 }
 
+void drawMeter(int step){
+  // draws a simple bar meter across the front for levels 0-15
+  // It's for brightness, but it may be useful for other cases
+  if(step < 0 || step > 15){ // Gots ta check them bounds, dig?
+    return;
+  }
+
+  fillAll(CRGB::DarkBlue);
+  for(int i=0; i<16; i++){ // draw a white line across the top.
+    leds[XY(i,0)] = CRGB::White;
+  }
+  for(int i=0; i<=step; i++){
+    leds[XY(i,1)] = CRGB::DarkRed; // draw the red bar below it
+  }
+  FastLED.show();
+  effectInit = false;
+  effectDelay = 500;
+  effectMillis = currentMillis; //reset the effects timer
+}
+
 // Interrupt normal operation to indicate that auto cycle mode has changed
 void confirmBlink() {
 

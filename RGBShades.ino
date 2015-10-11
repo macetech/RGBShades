@@ -103,11 +103,13 @@ void loop()
     case BTNRELEASED: // button was pressed and released quickly
       currentBrightness += 16; // increase the brightness (wraps to lowest)
       FastLED.setBrightness(scale8(currentBrightness,MAXBRIGHTNESS));
+      drawMeter(currentBrightness/16);
     break;
     
     case BTNLONGPRESS: // button was held down for a while
       currentBrightness = STARTBRIGHTNESS; // reset brightness to startup value
       FastLED.setBrightness(scale8(currentBrightness,MAXBRIGHTNESS));
+      drawMeter(currentBrightness/16);
     break;
   
   }
