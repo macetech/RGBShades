@@ -8,7 +8,7 @@ const char string2[] PROGMEM = "macetech.com  ";
 
 
 // Setup for serial
-char messageBuffer[140] = " 'apple' 'orange' apple's orange's";
+char messageBuffer[140] = "Upload message now...   ";
 int messageLen = 0;
 
 const char * const stringArray[] PROGMEM = {
