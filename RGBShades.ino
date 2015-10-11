@@ -7,7 +7,16 @@
 //   ZIP file https://github.com/FastLED/FastLED/archive/master.zip
 //
 //   Use Arduino IDE 1.0 or later
-//   Select device "Arduino Pro or Pro Mini (5V, 16MHz) w/ATmega328
+//
+//   If your RGB Shades were purchased before July 2015:
+//     This version has the standard Arduino bootloader. R9 and R10 near the control buttons will be present.
+//     Select the “Arduino Pro or Pro Mini” option.
+//     Then, go back into the Tools menu and find the Processor option and select “ATmega328 (5V, 16MHz)”.
+//
+//   If your RGB Shades were purchased after July 2015:
+//     This version has the Optiboot bootloader. R9 and 10 near the control buttons will be missing.
+//     Select the “Arduino Mini” option.
+//     Then, go back into the Tools menu and find the Processor option and select “ATmega328”.
 //
 //   [Press] the SW1 button to cycle through available effects
 //   Effects will also automatically cycle at startup
@@ -33,10 +42,13 @@ byte currentBrightness = STARTBRIGHTNESS; // 0-255 will be scaled to 0-MAXBRIGHT
 
 // Include FastLED library and other useful files
 #include <FastLED.h>
+#include "messages.h"
+#include "font.h"
 #include "XYmap.h"
 #include "utils.h"
 #include "effects.h"
 #include "buttons.h"
+
 
 // Runs one time at the start of the program (power up or reset)
 void setup() {
@@ -50,21 +62,35 @@ void setup() {
   // configure input buttons
   pinMode(MODEBUTTON, INPUT_PULLUP);
   pinMode(BRIGHTNESSBUTTON, INPUT_PULLUP);
+  Serial.begin(9600);
 
 }
 
+void serialEvent(){
+  if(Serial.available() == 0) return;
+  for (byte i = 0; i < sizeof(messageBuffer); i++) messageBuffer[i] = 0;
+  Serial.readBytesUntil('\n', messageBuffer, sizeof(messageBuffer));
+  effectInit = false;
+}
+
+
 // list of functions that will be displayed
-functionList effectList[] = {threeSine,
-                             threeDee,
-                             plasma,
-                             confetti,
-                             rider,
-                             glitter,
-                             slantBars,
-                             colorFill,
-                             sideRain, 
-                             shadesOutline,
-                             hearts};
+functionList effectList[] = {//threeSine,
+                             //threeDee,
+                             //scrollTextZero,
+                             //plasma,
+                             //confetti,
+                             //rider,
+                             scrollTextOne,
+                             scrollTextSerial,
+                             //glitter,
+                             //slantBars,
+                             //scrollTextTwo,
+                             //colorFill,
+                             //sideRain, 
+                             //shadesOutline,
+                             //hearts
+                           };
 
 // Timing parameters
 #define cycleTime 15000
@@ -98,14 +124,16 @@ void loop()
     case BTNRELEASED: // button was pressed and released quickly
       currentBrightness += 16; // increase the brightness (wraps to lowest)
       FastLED.setBrightness(scale8(currentBrightness,MAXBRIGHTNESS));
+      drawMeter(currentBrightness/16);
     break;
     
     case BTNLONGPRESS: // button was held down for a while
       currentBrightness = STARTBRIGHTNESS; // reset brightness to startup value
       FastLED.setBrightness(scale8(currentBrightness,MAXBRIGHTNESS));
+      drawMeter(currentBrightness/16);
     break;
   
-  }
+  } 
   
   // switch to a new effect every cycleTime milliseconds
   if (currentMillis - cycleMillis > cycleTime && autoCycle == true) {

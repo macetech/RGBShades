@@ -8,7 +8,7 @@ unsigned long currentMillis; // store current loop's millis value
 unsigned long hueMillis; // store time of last hue change
 
 byte currentEffect = 0; // index to the currently running effect
-boolean autoCycle = true; // flag for automatic effect changes
+boolean autoCycle = false; // flag for automatic effect changes
 
 CRGBPalette16 currentPalette(RainbowColors_p); // global pallete storage
 
@@ -57,6 +57,7 @@ void scrollArray(byte scrollDir) {
   
 }
 
+
 // Pick a random palette from a list
 void selectRandomPalette() {
 
@@ -90,7 +91,26 @@ void selectRandomPalette() {
     break;
   }
 
+}
 
+void drawMeter(int step){
+  // draws a simple bar meter across the front for levels 0-15
+  // It's for brightness, but it may be useful for other cases
+  if(step < 0 || step > 15){ // Gots ta check them bounds, dig?
+    return;
+  }
+
+  fillAll(CRGB::DarkBlue);
+  for(int i=0; i<16; i++){ // draw a white line across the top.
+    leds[XY(i,0)] = CRGB::White;
+  }
+  for(int i=0; i<=step; i++){
+    leds[XY(i,1)] = CRGB::DarkRed; // draw the red bar below it
+  }
+  FastLED.show();
+  effectInit = false;
+  effectDelay = 500;
+  effectMillis = currentMillis; //reset the effects timer
 }
 
 // Interrupt normal operation to indicate that auto cycle mode has changed
@@ -115,5 +135,37 @@ void confirmBlink() {
     FastLED.delay(200);
   }
 
+}
 
+// Determine flash address of text string
+unsigned int currentStringAddress = 0;
+void selectFlashString(byte string) {
+  currentStringAddress = pgm_read_word(&stringArray[string]);
+}
+
+
+
+void loadCharBuffer(byte character) {
+  int mappedCharacter = characterMapping(character);
+  
+  for (byte i = 0; i < 5; i++) {
+    charBuffer[i] = pgm_read_byte(Font[mappedCharacter]+(i+1));
+  }
+  
+}
+
+int loadCharWidth(byte character){
+  int mappedCharacter = characterMapping(character);
+  Serial.print("mappedCharacter: ");
+  Serial.println(mappedCharacter);
+  return (int)pgm_read_byte(Font[mappedCharacter]);
+}
+
+// Fetch a character value from a text string in flash
+char loadStringChar(byte string, byte character) {
+  if(string == 255){ // displaying serial string
+    return messageBuffer[character];
+  }else{
+    return (char) pgm_read_byte(currentStringAddress + character);
+  }
 }
