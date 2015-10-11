@@ -262,7 +262,7 @@ void scrollText(byte message, byte style, CRGB fgColor, CRGB bgColor) {
   // startup tasks
   if (effectInit == false) {
     effectInit = true;
-    effectDelay = 100;
+    effectDelay = 35;
     currentMessageChar = 0;
     currentCharColumn = 0;
     selectFlashString(message);
