@@ -9,7 +9,7 @@
 // Triple Sine Waves
 byte sineOffset = 0; // counter for current position of sine waves
 void threeSine() {
-  
+
   // startup tasks
   if (effectInit == false) {
     effectInit = true;
@@ -22,14 +22,14 @@ void threeSine() {
 
       // Calculate "sine" waves with varying periods
       // sin8 is used for speed; cos8, quadwave8, or triwave8 would also work here
-      byte sinDistanceR = qmul8(abs(y*(255/kMatrixHeight) - sin8(sineOffset*9+x*16)),2);
-      byte sinDistanceG = qmul8(abs(y*(255/kMatrixHeight) - sin8(sineOffset*10+x*16)),2);
-      byte sinDistanceB = qmul8(abs(y*(255/kMatrixHeight) - sin8(sineOffset*11+x*16)),2);
+      byte sinDistanceR = qmul8(abs(y * (255 / kMatrixHeight) - sin8(sineOffset * 9 + x * 16)), 2);
+      byte sinDistanceG = qmul8(abs(y * (255 / kMatrixHeight) - sin8(sineOffset * 10 + x * 16)), 2);
+      byte sinDistanceB = qmul8(abs(y * (255 / kMatrixHeight) - sin8(sineOffset * 11 + x * 16)), 2);
 
-      leds[XY(x,y)] = CRGB(255-sinDistanceR, 255-sinDistanceG, 255-sinDistanceB); 
+      leds[XY(x, y)] = CRGB(255 - sinDistanceR, 255 - sinDistanceG, 255 - sinDistanceB);
     }
   }
-  
+
   sineOffset++; // byte will wrap from 255 to 0, matching sin8 0-255 cycle
 
 }
@@ -46,15 +46,15 @@ void plasma() {
   }
 
   // Calculate current center of plasma pattern (can be offscreen)
-  int xOffset = cos8(plasVector/256);
-  int yOffset = sin8(plasVector/256);
+  int xOffset = cos8(plasVector / 256);
+  int yOffset = sin8(plasVector / 256);
 
   // Draw one frame of the animation into the LED array
   for (int x = 0; x < kMatrixWidth; x++) {
     for (int y = 0; y < kMatrixHeight; y++) {
-      byte color = sin8(sqrt(sq(((float)x-7.5)*10+xOffset-127)+sq(((float)y-2)*10+yOffset-127))+offset);
-      leds[XY(x,y)] = CHSV(color, 255, 255);
-    }    
+      byte color = sin8(sqrt(sq(((float)x - 7.5) * 10 + xOffset - 127) + sq(((float)y - 2) * 10 + yOffset - 127)) + offset);
+      leds[XY(x, y)] = CHSV(color, 255, 255);
+    }
   }
 
   offset++; // wraps at 255 for sin8
@@ -66,7 +66,7 @@ void plasma() {
 // Scanning pattern left/right, uses global hue cycle
 byte riderPos = 0;
 void rider() {
-  
+
   // startup tasks
   if (effectInit == false) {
     effectInit = true;
@@ -76,12 +76,12 @@ void rider() {
 
   // Draw one frame of the animation into the LED array
   for (byte x = 0; x < kMatrixWidth; x++) {
-    int brightness = abs(x*(256/kMatrixWidth) - triwave8(riderPos)*2 + 127)*3;
+    int brightness = abs(x * (256 / kMatrixWidth) - triwave8(riderPos) * 2 + 127) * 3;
     if (brightness > 255) brightness = 255;
     brightness = 255 - brightness;
     CRGB riderColor = CHSV(cycleHue, 255, brightness);
     for (byte y = 0; y < kMatrixHeight; y++) {
-      leds[XY(x,y)] = riderColor;
+      leds[XY(x, y)] = riderColor;
     }
   }
 
@@ -102,8 +102,8 @@ void glitter() {
 
   // Draw one frame of the animation into the LED array
   for (int x = 0; x < kMatrixWidth; x++) {
-    for (int y = 0; y <kMatrixHeight; y++) {
-      leds[XY(x,y)] = CHSV(cycleHue,255,random8(5)*63);
+    for (int y = 0; y < kMatrixHeight; y++) {
+      leds[XY(x, y)] = CHSV(cycleHue, 255, random8(5) * 63);
     }
   }
 
@@ -115,7 +115,7 @@ byte currentColor = 0;
 byte currentRow = 0;
 byte currentDirection = 0;
 void colorFill() {
-  
+
   // startup tasks
   if (effectInit == false) {
     effectInit = true;
@@ -132,9 +132,9 @@ void colorFill() {
     for (byte x = 0; x < kMatrixWidth; x++) {
       byte y = currentRow;
       if (currentDirection == 2) y = kMatrixHeight - 1 - currentRow;
-      leds[XY(x,y)] = currentPalette[currentColor];
+      leds[XY(x, y)] = currentPalette[currentColor];
     }
-  } 
+  }
 
   // test a bitmask to fill left or right when currentDirection is 1 or 3 (0b01 or 0b11)
   if (currentDirection & 1) {
@@ -142,16 +142,16 @@ void colorFill() {
     for (byte y = 0; y < kMatrixHeight; y++) {
       byte x = currentRow;
       if (currentDirection == 3) x = kMatrixWidth - 1 - currentRow;
-      leds[XY(x,y)] = currentPalette[currentColor];
+      leds[XY(x, y)] = currentPalette[currentColor];
     }
   }
 
   currentRow++;
-  
+
   // detect when a fill is complete, change color and direction
   if ((!(currentDirection & 1) && currentRow >= kMatrixHeight) || ((currentDirection & 1) && currentRow >= kMatrixWidth)) {
     currentRow = 0;
-    currentColor += random8(3,6);
+    currentColor += random8(3, 6);
     if (currentColor > 15) currentColor -= 16;
     currentDirection++;
     if (currentDirection > 3) currentDirection = 0;
@@ -169,21 +169,21 @@ void threeDee() {
     effectInit = true;
     effectDelay = 50;
   }
-  
-   for (byte x = 0; x < kMatrixWidth; x++) {
-     for (byte y = 0; y < kMatrixHeight; y++) {
-       if (x < 7) {
-         leds[XY(x,y)] = CRGB::Blue;
-       } else if (x > 8) {
-         leds[XY(x,y)] = CRGB::Red;
-       } else {
-         leds[XY(x,y)] = CRGB::Black;
-       }
-     }
-   }
-   
-   leds[XY(6,0)] = CRGB::Black;
-   leds[XY(9,0)] = CRGB::Black;
+
+  for (byte x = 0; x < kMatrixWidth; x++) {
+    for (byte y = 0; y < kMatrixHeight; y++) {
+      if (x < 7) {
+        leds[XY(x, y)] = CRGB::Blue;
+      } else if (x > 8) {
+        leds[XY(x, y)] = CRGB::Red;
+      } else {
+        leds[XY(x, y)] = CRGB::Black;
+      }
+    }
+  }
+
+  leds[XY(6, 0)] = CRGB::Black;
+  leds[XY(9, 0)] = CRGB::Black;
 
 }
 
@@ -196,11 +196,11 @@ void sideRain() {
     effectInit = true;
     effectDelay = 30;
   }
-  
+
   scrollArray(rainDir);
   byte randPixel = random8(kMatrixHeight);
-  for (byte y = 0; y < kMatrixHeight; y++) leds[XY((kMatrixWidth-1) * rainDir,y)] = CRGB::Black;
-  leds[XY((kMatrixWidth-1)*rainDir, randPixel)] = CHSV(cycleHue, 255, 255); 
+  for (byte y = 0; y < kMatrixHeight; y++) leds[XY((kMatrixWidth - 1) * rainDir, y)] = CRGB::Black;
+  leds[XY((kMatrixWidth - 1)*rainDir, randPixel)] = CHSV(cycleHue, 255, 255);
 
 }
 
@@ -217,10 +217,10 @@ void confetti() {
 
   // scatter random colored pixels at several random coordinates
   for (byte i = 0; i < 4; i++) {
-    leds[XY(random16(kMatrixWidth),random16(kMatrixHeight))] = ColorFromPalette(currentPalette, random16(255), 255);//CHSV(random16(255), 255, 255);
+    leds[XY(random16(kMatrixWidth), random16(kMatrixHeight))] = ColorFromPalette(currentPalette, random16(255), 255); //CHSV(random16(255), 255, 255);
     random16_add_entropy(1);
   }
-   
+
 }
 
 
@@ -236,16 +236,107 @@ void slantBars() {
 
   for (byte x = 0; x < kMatrixWidth; x++) {
     for (byte y = 0; y < kMatrixHeight; y++) {
-      leds[XY(x,y)] = CHSV(cycleHue, 255, quadwave8(x*32+y*32+slantPos));
+      leds[XY(x, y)] = CHSV(cycleHue, 255, quadwave8(x * 32 + y * 32 + slantPos));
     }
   }
 
-  slantPos-=4;
+  slantPos -= 4;
 
+}
+
+
+#define NORMAL 0
+#define RAINBOW 1
+#define charSpacing 1
+// Scroll a text string
+void scrollText(byte message, byte style, CRGB fgColor, CRGB bgColor) {
+  static byte currentMessageChar = 0;
+  static byte currentCharColumn = 0;
+  static byte paletteCycle = 0;
+  static CRGB currentColor;
+  static byte bitBuffer[16] = {0};
+  static byte bitBufferPointer = 0;
+  static int charWidth;
+
+  // startup tasks
+  if (effectInit == false) {
+    effectInit = true;
+    effectDelay = 35;
+    currentMessageChar = 0;
+    currentCharColumn = 0;
+    selectFlashString(message);
+    loadCharBuffer(loadStringChar(message, currentMessageChar));
+    charWidth = loadCharWidth(loadStringChar(message, currentMessageChar)); 
+    //currentPalette = ForestColors_p   ;
+    currentPalette = RainbowColors_p;
+    for (byte i = 0; i < kMatrixWidth; i++) bitBuffer[i] = 0;
+  }
+
+  paletteCycle += 15;
+
+  if (currentCharColumn < charWidth) { // character bitfields are charwidth pixels wide
+    bitBuffer[(bitBufferPointer + kMatrixWidth - 1) % kMatrixWidth] = charBuffer[currentCharColumn]; // character
+  } else {
+    bitBuffer[(bitBufferPointer + kMatrixWidth - 1) % kMatrixWidth] = 0; // space
+  }
+
+  CRGB pixelColor;
+  for (byte x = 0; x < kMatrixWidth; x++) {
+    for (byte y = 0; y < 5; y++) { // characters are 5 pixels tall
+      if (bitRead(bitBuffer[(bitBufferPointer + x) % kMatrixWidth], y) == 1) {
+        if (style == RAINBOW) {
+          pixelColor = ColorFromPalette(currentPalette, paletteCycle+y*16, 255);
+        } else {
+          pixelColor = fgColor;
+        }
+      } else {
+        pixelColor = bgColor;
+      }
+      leds[XY(x, y)] = pixelColor;
+    }
+  }
+
+  currentCharColumn++;
+  if (currentCharColumn > ((charWidth - 1) + charSpacing)) {
+    currentCharColumn = 0;
+    currentMessageChar++;
+    char nextChar = loadStringChar(message, currentMessageChar);
+    if (nextChar == 0) { // null character at end of strong
+      currentMessageChar = 0;
+      nextChar = loadStringChar(message, currentMessageChar);
+    }
+    loadCharBuffer(nextChar);
+    charWidth = loadCharWidth(nextChar);
+  }
+
+  bitBufferPointer++;
+  if (bitBufferPointer > 15) bitBufferPointer = 0;
+
+}
+
+
+void scrollTextZero() {
+  scrollText(0, NORMAL, CRGB::Red, CRGB::Black);
+}
+
+void scrollTextOne() {
+  scrollText(1, RAINBOW, 0, CRGB::Black);
+}
+
+void scrollTextTwo() {
+  scrollText(2, NORMAL, CRGB::Green, CRGB(0,0,8));
+}
+
+void scrollTextSerial(){
+  scrollText(255, RAINBOW, CRGB::DarkRed, CRGB::Black);
 }
 //leds run around the periphery of the shades, changing color every go 'round
 boolean erase = false;
 uint8_t x,y = 0;
+const uint8_t OutlineTable[] = {
+     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 43,
+     44, 67, 66, 65, 64, 63, 50, 37, 21, 22, 36, 51, 62, 61, 60, 59,
+     58, 57, 30, 29};
 void shadesOutline(){
   //startup tasks
     if (effectInit == false) {
@@ -255,10 +346,7 @@ void shadesOutline(){
     effectDelay = 15; 
     FastLED.clear();
     currentPalette = RainbowColors_p;}
-  const uint8_t OutlineTable[] = {
-     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 43,
-     44, 67, 66, 65, 64, 63, 50, 37, 21, 22, 36, 51, 62, 61, 60, 59,
-     58, 57, 30, 29};
+  
     leds[OutlineTable[x]] = currentPalette[currentColor];
   if (erase)
     leds[OutlineTable[x]] = CRGB::Black;
@@ -308,84 +396,4 @@ void hearts() {
     if (y == 4)
      FastLED.clear();
   y++;
-}
-
-#define NORMAL 0
-#define RAINBOW 1
-#define charSpacing 2
-// Scroll a text string
-void scrollText(byte message, byte style, CRGB fgColor, CRGB bgColor) {
-  static byte currentMessageChar = 0;
-  static byte currentCharColumn = 0;
-  static byte paletteCycle = 0;
-  static CRGB currentColor;
-  static byte bitBuffer[16] = {0};
-  static byte bitBufferPointer = 0;
-
-
-  // startup tasks
-  if (effectInit == false) {
-    effectInit = true;
-    effectDelay = 35;
-    currentMessageChar = 0;
-    currentCharColumn = 0;
-    selectFlashString(message);
-    loadCharBuffer(loadStringChar(message, currentMessageChar));
-    currentPalette = RainbowColors_p;
-    for (byte i = 0; i < kMatrixWidth; i++) bitBuffer[i] = 0;
-  }
-
-
-  paletteCycle += 15;
-
-  if (currentCharColumn < 5) { // characters are 5 pixels wide
-    bitBuffer[(bitBufferPointer + kMatrixWidth - 1) % kMatrixWidth] = charBuffer[currentCharColumn]; // character
-  } else {
-    bitBuffer[(bitBufferPointer + kMatrixWidth - 1) % kMatrixWidth] = 0; // space
-  }
-
-  CRGB pixelColor;
-  for (byte x = 0; x < kMatrixWidth; x++) {
-    for (byte y = 0; y < 5; y++) { // characters are 5 pixels tall
-      if (bitRead(bitBuffer[(bitBufferPointer + x) % kMatrixWidth], y) == 1) {
-        if (style == RAINBOW) {
-          pixelColor = ColorFromPalette(currentPalette, paletteCycle+y*16, 255);
-        } else {
-          pixelColor = fgColor;
-        }
-      } else {
-        pixelColor = bgColor;
-      }
-      leds[XY(x, y)] = pixelColor;
-    }
-  }
-
-  currentCharColumn++;
-  if (currentCharColumn > (4 + charSpacing)) {
-    currentCharColumn = 0;
-    currentMessageChar++;
-    char nextChar = loadStringChar(message, currentMessageChar);
-    if (nextChar == 0) { // null character at end of strong
-      currentMessageChar = 0;
-      nextChar = loadStringChar(message, currentMessageChar);
-    }
-    loadCharBuffer(nextChar);
-  }
-
-  bitBufferPointer++;
-  if (bitBufferPointer > 15) bitBufferPointer = 0;
-
-}
-
-
-void scrollTextZero() {
-  scrollText(0, NORMAL, CRGB::Red, CRGB::Black);
-}
-
-void scrollTextOne() {
-  scrollText(1, RAINBOW, 0, CRGB::Black);
-}
-
-void scrollTextTwo() {
-  scrollText(2, NORMAL, CRGB::Green, CRGB(0,0,8));
 }

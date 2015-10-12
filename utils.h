@@ -8,7 +8,7 @@ unsigned long currentMillis; // store current loop's millis value
 unsigned long hueMillis; // store time of last hue change
 
 byte currentEffect = 0; // index to the currently running effect
-boolean autoCycle = true; // flag for automatic effect changes
+boolean autoCycle = false; // flag for automatic effect changes
 
 CRGBPalette16 currentPalette(RainbowColors_p); // global pallete storage
 
@@ -57,6 +57,7 @@ void scrollArray(byte scrollDir) {
   
 }
 
+
 // Pick a random palette from a list
 void selectRandomPalette() {
 
@@ -89,7 +90,6 @@ void selectRandomPalette() {
     currentPalette = HeatColors_p;
     break;
   }
-
 
 }
 
@@ -135,7 +135,6 @@ void confirmBlink() {
     FastLED.delay(200);
   }
 
-
 }
 
 // Determine flash address of text string
@@ -144,25 +143,25 @@ void selectFlashString(byte string) {
   currentStringAddress = pgm_read_word(&stringArray[string]);
 }
 
-// Fetch font character bitmap from flash
-byte charBuffer[5] = {0};
 void loadCharBuffer(byte character) {
-  byte mappedCharacter = character;
-  if (mappedCharacter >= 32 && mappedCharacter <= 95) {
-    mappedCharacter -= 32; // subtract font array offset
-  } else if (mappedCharacter >= 97 && mappedCharacter <= 122) {
-    mappedCharacter -= 64; // subtract font array offset and convert lowercase to uppercase
-  } else {
-    mappedCharacter = 96; // unknown character block
-  }
+  int mappedCharacter = characterMapping(character);
   
-  for (byte i = 0; i < 5; i++) {
-    charBuffer[i] = pgm_read_byte(Font[mappedCharacter]+i);
+  for (byte i = 1; i < 6; i++) {
+    charBuffer[i-1] = pgm_read_byte(Font[mappedCharacter]+i);
   }
   
 }
 
+int loadCharWidth(byte character){
+  int mappedCharacter = characterMapping(character);
+  return (int)pgm_read_byte(Font[mappedCharacter]);
+}
+
 // Fetch a character value from a text string in flash
 char loadStringChar(byte string, byte character) {
-  return (char) pgm_read_byte(currentStringAddress + character);
+  if(string == 255){ // displaying serial string
+    return messageBuffer[character];
+  }else{
+    return (char) pgm_read_byte(currentStringAddress + character);
+  }
 }
