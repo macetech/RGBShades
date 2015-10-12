@@ -8,9 +8,9 @@ const char string2[] PROGMEM = "macetech.com  ";
 
 
 // Setup for serial
-char messageBuffer[140] = "Upload message now...   ";
+char messageBuffer[240] = "Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz { | } ~ ";
 int messageLen = 0;
-
+// {|}~!\"#$%&'()*+.-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`
 const char * const stringArray[] PROGMEM = {
   string0,
   string1,

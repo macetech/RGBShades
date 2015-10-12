@@ -36,14 +36,14 @@
 #define CHIPSET     WS2811
 
 // Global maximum brightness value, maximum 255
-#define MAXBRIGHTNESS 72
+#define MAXBRIGHTNESS 16
 #define STARTBRIGHTNESS 127
 byte currentBrightness = STARTBRIGHTNESS; // 0-255 will be scaled to 0-MAXBRIGHTNESS
 
 // Include FastLED library and other useful files
 #include <FastLED.h>
 #include "messages.h"
-#include "font.h"
+#include "font2.h"
 #include "XYmap.h"
 #include "utils.h"
 #include "effects.h"
@@ -75,14 +75,15 @@ void serialEvent(){
 
 
 // list of functions that will be displayed
-functionList effectList[] = {//threeSine,
+functionList effectList[] = {
+                             scrollTextSerial,
+                             //threeSine,
                              //threeDee,
                              //scrollTextZero,
                              //plasma,
                              //confetti,
                              //rider,
-                             scrollTextOne,
-                             scrollTextSerial,
+                             //scrollTextOne,
                              //glitter,
                              //slantBars,
                              //scrollTextTwo,

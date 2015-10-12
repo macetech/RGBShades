@@ -262,7 +262,7 @@ void scrollText(byte message, byte style, CRGB fgColor, CRGB bgColor) {
   // startup tasks
   if (effectInit == false) {
     effectInit = true;
-    effectDelay = 35;
+    effectDelay = 100;
     currentMessageChar = 0;
     currentCharColumn = 0;
     selectFlashString(message);
@@ -270,7 +270,12 @@ void scrollText(byte message, byte style, CRGB fgColor, CRGB bgColor) {
     charWidth = loadCharWidth(loadStringChar(message, currentMessageChar));
     Serial.print("Initialization charWidth: ");
     Serial.println(charWidth);
-    currentPalette = RainbowColors_p;
+    Serial.print("Init char:");
+    Serial.print(loadStringChar(message, currentMessageChar));
+    Serial.println((int)loadStringChar(message, currentMessageChar));
+    Serial.print("Init charMapping: ");
+    Serial.println(characterMapping(loadStringChar(message, currentMessageChar)));
+    currentPalette = ForestColors_p;
     for (byte i = 0; i < kMatrixWidth; i++) bitBuffer[i] = 0;
   }
 
@@ -330,7 +335,7 @@ void scrollTextTwo() {
 }
 
 void scrollTextSerial(){
-  scrollText(255, NORMAL, CRGB::DarkRed, CRGB::DarkBlue);
+  scrollText(255, RAINBOW, CRGB::DarkRed, CRGB::Black);
 }
 //leds run around the periphery of the shades, changing color every go 'round
 boolean erase = false;

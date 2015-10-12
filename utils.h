@@ -148,16 +148,14 @@ void selectFlashString(byte string) {
 void loadCharBuffer(byte character) {
   int mappedCharacter = characterMapping(character);
   
-  for (byte i = 0; i < 5; i++) {
-    charBuffer[i] = pgm_read_byte(Font[mappedCharacter]+(i+1));
+  for (byte i = 1; i < 6; i++) {
+    charBuffer[i-1] = pgm_read_byte(Font[mappedCharacter]+i);
   }
   
 }
 
 int loadCharWidth(byte character){
   int mappedCharacter = characterMapping(character);
-  Serial.print("mappedCharacter: ");
-  Serial.println(mappedCharacter);
   return (int)pgm_read_byte(Font[mappedCharacter]);
 }
 
