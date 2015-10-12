@@ -261,13 +261,13 @@ void scrollText(byte message, byte style, CRGB fgColor, CRGB bgColor) {
   // startup tasks
   if (effectInit == false) {
     effectInit = true;
-    effectDelay = 100;
+    effectDelay = 35;
     currentMessageChar = 0;
     currentCharColumn = 0;
     selectFlashString(message);
     loadCharBuffer(loadStringChar(message, currentMessageChar));
     charWidth = loadCharWidth(loadStringChar(message, currentMessageChar)); 
-    //currentPalette = ForestColors_p;
+    //currentPalette = ForestColors_p   ;
     currentPalette = RainbowColors_p;
     for (byte i = 0; i < kMatrixWidth; i++) bitBuffer[i] = 0;
   }
