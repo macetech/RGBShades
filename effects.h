@@ -389,3 +389,18 @@ void scrollTextOne() {
 void scrollTextTwo() {
   scrollText(2, NORMAL, CRGB::Green, CRGB(0,0,8));
 }
+
+//Peace signs
+const uint8_t Peace[] = {1, 2, 3, 28, 26, 24, 31, 33, 35, 56, 55, 53, 52, 59, 60, 61,
+   10, 11, 12, 19, 17, 15, 38, 40, 42, 49, 48, 46, 45, 64, 65, 66};
+void peace() {
+   if (effectInit == false) {
+    effectInit = true;
+    effectDelay = 30;
+    FastLED.clear();
+   }
+   for (int x = 0; x < 32; x++) {
+    leds[Peace[x]] = CHSV(cycleHue, 255, 255);
+   }
+}
+
