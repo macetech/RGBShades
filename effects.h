@@ -398,16 +398,16 @@ const uint8_t PacManClosed[] = {1, 2, 3, 28, 27, 26, 25,
 const uint8_t PacManMouth[] = {25, 24, 33, 34, 35, 53, 52};
 const uint8_t Pellets1[] = {34, 36};
 const uint8_t Pellets2[] = {33, 35, 37, 43};
+int pacman_step = 0;
 void pacman() {
    if (effectInit == false) {
     effectInit = true;
     effectDelay = 175;
     FastLED.clear();
-    y = 0;
    }
-   if (y==3)
-    y = 0;
-   if (y == 0) {
+   if (pacman_step==3)
+    pacman_step = 0;
+   if (pacman_step == 0) {
     for (int x = 0; x < 2; x++) {
      leds[Pellets1[x]] = CRGB::White;
     }
@@ -424,7 +424,7 @@ void pacman() {
      leds[Ghost[x]] = CRGB::Blue;
     }
    }
-   if (y == 1) {
+   if (pacman_step == 1) {
     for (int x = 0; x < 2; x++) {
      leds[Pellets1[x]] = CRGB::Black;
     }
@@ -432,7 +432,7 @@ void pacman() {
      leds[Pellets2[x]] = CRGB::White;
     }
    }
-   if (y == 2) {
+   if (pacman_step == 2) {
     for (int x = 0; x < 2; x++) {
      leds[Pellets1[x]] = CRGB::White;
     }
@@ -443,5 +443,5 @@ void pacman() {
      leds[PacManClosed[x]] = CRGB::Yellow;
     }
    }
-   y++;
+   pacman_step++;
 }
