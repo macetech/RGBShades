@@ -396,28 +396,52 @@ const uint8_t Ghost[] = {10, 11, 12, 19, 17, 15, 38,
 const uint8_t PacManClosed[] = {1, 2, 3, 28, 27, 26, 25,
    24, 31, 32, 33, 34, 35, 56, 55, 54, 53, 52, 59, 60, 61};
 const uint8_t PacManMouth[] = {25, 24, 33, 34, 35, 53, 52};
+const uint8_t Pellets1[] = {34, 36};
+const uint8_t Pellets2[] = {33, 35, 37, 43};
 void pacman() {
    if (effectInit == false) {
     effectInit = true;
-    effectDelay = 225;
+    effectDelay = 175;
     FastLED.clear();
     y = 0;
    }
-   if (y==2)
+   if (y==3)
     y = 0;
    if (y == 0) {
+    for (int x = 0; x < 2; x++) {
+     leds[Pellets1[x]] = CRGB::White;
+    }
+    for (int x = 0; x < 4; x++) {
+     leds[Pellets2[x]] = CRGB::Black;
+    }
     for (int x = 0; x < 21; x++) {
      leds[PacManClosed[x]] = CRGB::Yellow;
+    }
+    for (int x = 0; x < 7; x++) {
+     leds[PacManMouth[x]] = CRGB::Black;
     }
     for (int x = 0; x < 19; x++) {
      leds[Ghost[x]] = CRGB::Blue;
     }
    }
    if (y == 1) {
-    for (int x = 0; x < 7; x++) {
-     leds[PacManMouth[x]] = CRGB::Black;
+    for (int x = 0; x < 2; x++) {
+     leds[Pellets1[x]] = CRGB::Black;
+    }
+    for (int x = 0; x < 4; x++) {
+     leds[Pellets2[x]] = CRGB::White;
+    }
+   }
+   if (y == 2) {
+    for (int x = 0; x < 2; x++) {
+     leds[Pellets1[x]] = CRGB::White;
+    }
+    for (int x = 0; x < 4; x++) {
+     leds[Pellets2[x]] = CRGB::Black;
+    }
+    for (int x = 0; x < 21; x++) {
+     leds[PacManClosed[x]] = CRGB::Yellow;
     }
    }
    y++;
 }
-
