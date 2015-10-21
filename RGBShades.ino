@@ -69,7 +69,8 @@ functionList effectList[] = {threeSine,
                              scrollTextZero,
                              sideRain, 
                              shadesOutline,
-                             hearts};
+                             hearts,
+                             peace};
 
 // Timing parameters
 #define cycleTime 15000
