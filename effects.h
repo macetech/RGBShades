@@ -404,3 +404,33 @@ void peace() {
    }
 }
 
+//Pacman
+const uint8_t Ghost[] = {10, 11, 12, 19, 17, 15, 38,
+   39, 40, 41, 42, 49, 48, 47, 46, 45, 63, 65, 67};
+const uint8_t PacManClosed[] = {1, 2, 3, 28, 27, 26, 25,
+   24, 31, 32, 33, 34, 35, 56, 55, 54, 53, 52, 59, 60, 61};
+const uint8_t PacManMouth[] = {25, 24, 33, 34, 35, 53, 52};
+void pacman() {
+   if (effectInit == false) {
+    effectInit = true;
+    effectDelay = 225;
+    FastLED.clear();
+    y = 0;
+   }
+   if (y==2)
+    y = 0;
+   if (y == 0) {
+    for (int x = 0; x < 21; x++) {
+     leds[PacManClosed[x]] = CRGB::Yellow;
+    }
+    for (int x = 0; x < 19; x++) {
+     leds[Ghost[x]] = CRGB::Blue;
+    }
+   }
+   if (y == 1) {
+    for (int x = 0; x < 7; x++) {
+     leds[PacManMouth[x]] = CRGB::Black;
+    }
+   }
+   y++;
+}
