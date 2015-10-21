@@ -398,10 +398,9 @@ void peace() {
     effectInit = true;
     effectDelay = 30;
     FastLED.clear();
-   int x = 0;
-   int y = 0;
-    }
-     for (x = 0; x < 32; x++) {
-      leds[Peace[x]] = CHSV(cycleHue, 255, 255);
-     }
+   }
+   for (int x = 0; x < 32; x++) {
+    leds[Peace[x]] = CHSV(cycleHue, 255, 255);
+   }
 }
+
