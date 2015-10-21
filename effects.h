@@ -389,3 +389,60 @@ void scrollTextOne() {
 void scrollTextTwo() {
   scrollText(2, NORMAL, CRGB::Green, CRGB(0,0,8));
 }
+
+//Pacman
+const uint8_t Ghost[] = {10, 11, 12, 19, 17, 15, 38,
+   39, 40, 41, 42, 49, 48, 47, 46, 45, 63, 65, 67};
+const uint8_t PacManClosed[] = {1, 2, 3, 28, 27, 26, 25,
+   24, 31, 32, 33, 34, 35, 56, 55, 54, 53, 52, 59, 60, 61};
+const uint8_t PacManMouth[] = {25, 24, 33, 34, 35, 53, 52};
+const uint8_t Pellets1[] = {34, 36};
+const uint8_t Pellets2[] = {35, 37, 43};
+int pacman_step = 0;
+void pacman() {
+   if (effectInit == false) {
+    effectInit = true;
+    effectDelay = 175;
+    FastLED.clear();
+   }
+   if (pacman_step==3)
+    pacman_step = 0;
+   if (pacman_step == 0) {
+    for (int x = 0; x < 2; x++) {
+     leds[Pellets1[x]] = CRGB::White;
+    }
+    for (int x = 0; x < 3; x++) {
+     leds[Pellets2[x]] = CRGB::Black;
+    }
+    for (int x = 0; x < 21; x++) {
+     leds[PacManClosed[x]] = CRGB::Yellow;
+    }
+    for (int x = 0; x < 7; x++) {
+     leds[PacManMouth[x]] = CRGB::Black;
+    }
+    for (int x = 0; x < 19; x++) {
+     leds[Ghost[x]] = CRGB::Blue;
+    }
+   }
+   if (pacman_step == 1) {
+    for (int x = 0; x < 2; x++) {
+     leds[Pellets1[x]] = CRGB::Black;
+    }
+    for (int x = 0; x < 3; x++) {
+     leds[Pellets2[x]] = CRGB::White;
+    }
+   }
+   if (pacman_step == 2) {
+    for (int x = 0; x < 2; x++) {
+     leds[Pellets1[x]] = CRGB::White;
+    }
+    for (int x = 0; x < 3; x++) {
+     leds[Pellets2[x]] = CRGB::Black;
+    }
+    for (int x = 0; x < 21; x++) {
+     leds[PacManClosed[x]] = CRGB::Yellow;
+    }
+   }
+   pacman_step++;
+}
+
