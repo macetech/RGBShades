@@ -147,6 +147,7 @@ char loadStringChar(byte string, byte character) {
   return (char) pgm_read_byte(currentStringAddress + character);
 }
 
+// Write settings to EEPROM if necessary
 void checkEEPROM() {
   if (eepromOutdated) {
     if (currentMillis - eepromMillis > EEPROMDELAY) {

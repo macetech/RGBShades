@@ -107,8 +107,8 @@ void loop()
 {
   currentMillis = millis(); // save the current timer value
   updateButtons();          // read, debounce, and process the buttons
-  doButtons();           // perform actions based on button state
-  checkEEPROM();
+  doButtons();              // perform actions based on button state
+  checkEEPROM();            // update the EEPROM if necessary
 
   // switch to a new effect every cycleTime milliseconds
   if (currentMillis - cycleMillis > cycleTime && autoCycle == true) {
