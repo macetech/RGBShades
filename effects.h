@@ -7,8 +7,9 @@
 //    * Pixel data should be written using leds[XY(x,y)] to map coordinates to the RGB Shades layout
 
 // Triple Sine Waves
-byte sineOffset = 0; // counter for current position of sine waves
 void threeSine() {
+
+  static byte sineOffset = 0; // counter for current position of sine waves
 
   // startup tasks
   if (effectInit == false) {
@@ -36,9 +37,10 @@ void threeSine() {
 
 
 // RGB Plasma
-byte offset  = 0; // counter for radial color wave motion
-int plasVector = 0; // counter for orbiting plasma center
 void plasma() {
+
+  static byte offset  = 0; // counter for radial color wave motion
+  static int plasVector = 0; // counter for orbiting plasma center
 
   // startup tasks
   if (effectInit == false) {
@@ -65,8 +67,9 @@ void plasma() {
 
 
 // Scanning pattern left/right, uses global hue cycle
-byte riderPos = 0;
 void rider() {
+
+  static byte riderPos = 0;
 
   // startup tasks
   if (effectInit == false) {
@@ -91,7 +94,6 @@ void rider() {
 }
 
 
-
 // Shimmering noise, uses global hue cycle
 void glitter() {
 
@@ -112,10 +114,11 @@ void glitter() {
 
 
 // Fills saturated colors into the array from alternating directions
-byte currentColor = 0;
-byte currentRow = 0;
-byte currentDirection = 0;
 void colorFill() {
+
+  static byte currentColor = 0;
+  static byte currentRow = 0;
+  static byte currentDirection = 0;
 
   // startup tasks
   if (effectInit == false) {
@@ -226,8 +229,9 @@ void confetti() {
 
 
 // Draw slanting bars scrolling across the array, uses current hue
-byte slantPos = 0;
 void slantBars() {
+
+  static byte slantPos = 0;
 
   // startup tasks
   if (effectInit == false) {
@@ -258,7 +262,6 @@ void scrollText(byte message, byte style, CRGB fgColor, CRGB bgColor) {
   static byte bitBuffer[16] = {0};
   static byte bitBufferPointer = 0;
 
-
   // startup tasks
   if (effectInit == false) {
     effectInit = true;
@@ -270,7 +273,6 @@ void scrollText(byte message, byte style, CRGB fgColor, CRGB bgColor) {
     currentPalette = RainbowColors_p;
     for (byte i = 0; i < kMatrixWidth; i++) bitBuffer[i] = 0;
   }
-
 
   paletteCycle += 15;
 
