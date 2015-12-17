@@ -147,14 +147,19 @@ char loadStringChar(byte string, byte character) {
   return (char) pgm_read_byte(currentStringAddress + character);
 }
 
+// write EEPROM value if it's different from stored value
+void updateEEPROM(byte location, byte value) {
+  if (EEPROM.read(location) != value) EEPROM.write(location, value);
+}
+
 // Write settings to EEPROM if necessary
 void checkEEPROM() {
   if (eepromOutdated) {
     if (currentMillis - eepromMillis > EEPROMDELAY) {
-      EEPROM.update(0, 99);
-      EEPROM.update(1, currentEffect);
-      EEPROM.update(2, autoCycle);
-      EEPROM.update(3, currentBrightness);
+      updateEEPROM(0, 99);
+      updateEEPROM(1, currentEffect);
+      updateEEPROM(2, autoCycle);
+      updateEEPROM(3, currentBrightness);
       eepromOutdated = false;
     }
   }
