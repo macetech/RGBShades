@@ -61,30 +61,6 @@
 #include "buttons.h"
 
 
-// Runs one time at the start of the program (power up or reset)
-void setup() {
-
-  // check to see if EEPROM has been used yet
-  // if so, load the stored settings
-  byte eepromWasWritten = EEPROM.read(0);
-  if (eepromWasWritten == 99) {
-    currentEffect = EEPROM.read(1);
-    autoCycle = EEPROM.read(2);
-    currentBrightness = EEPROM.read(3);
-  }
-
-  // write FastLED configuration data
-  FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, LAST_VISIBLE_LED + 1);
-
-  // set global brightness value
-  FastLED.setBrightness( scale8(currentBrightness, MAXBRIGHTNESS) );
-
-  // configure input buttons
-  pinMode(MODEBUTTON, INPUT_PULLUP);
-  pinMode(BRIGHTNESSBUTTON, INPUT_PULLUP);
-
-}
-
 // list of functions that will be displayed
 functionList effectList[] = {threeSine,
                              threeDee,
@@ -101,6 +77,33 @@ functionList effectList[] = {threeSine,
                             };
 
 const byte numEffects = (sizeof(effectList)/sizeof(effectList[0]));
+
+// Runs one time at the start of the program (power up or reset)
+void setup() {
+
+  // check to see if EEPROM has been used yet
+  // if so, load the stored settings
+  byte eepromWasWritten = EEPROM.read(0);
+  if (eepromWasWritten == 99) {
+    currentEffect = EEPROM.read(1);
+    autoCycle = EEPROM.read(2);
+    currentBrightness = EEPROM.read(3);
+  }
+
+  if (currentEffect > (numEffects - 1)) currentEffect = 0;
+
+  // write FastLED configuration data
+  FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, LAST_VISIBLE_LED + 1);
+
+  // set global brightness value
+  FastLED.setBrightness( scale8(currentBrightness, MAXBRIGHTNESS) );
+
+  // configure input buttons
+  pinMode(MODEBUTTON, INPUT_PULLUP);
+  pinMode(BRIGHTNESSBUTTON, INPUT_PULLUP);
+
+}
+
 
 // Runs over and over until power off or reset
 void loop()
