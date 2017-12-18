@@ -45,31 +45,6 @@ void swirls() {
   }
 }
 
-// radiating inward rainbow colors
-void radiateCenter() {
-  static byte offset  = 9; // counter for radial color wave motion
-  static int plasVector = 0; // counter for orbiting plasma center
-
-  // startup tasks
-  if (effectInit == false) {
-    effectInit = true;
-    effectDelay = 0;
-  }
-
-  int xOffset = 0;
-  int yOffset = 4;
-
-  // Draw one frame of the animation into the LED array
-  for (int x = 0; x < kMatrixWidth; x++) {
-    for (int y = 0; y < kMatrixHeight; y++) {
-      byte color = sin8(sqrt(sq(((float)x - 7.5) * 12 + xOffset) + sq(((float)y - 2) * 12 + yOffset)) + offset);
-      leds[XY(x, y)] = ColorFromPalette(currentPalette, color, 255);
-    }
-  }
-  offset--; // wraps at 255 for sin8
-  plasVector += 1; // using an int for slower orbit (wraps at 65536)
-}
-
 // Triple Sine Waves
 byte sineOffset = 0; // counter for current position of sine waves
 void threeSine() {
