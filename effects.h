@@ -6,6 +6,45 @@
 //    * All animation should be controlled with counters and effectDelay, no delay() or loops
 //    * Pixel data should be written using leds[XY(x,y)] to map coordinates to the RGB Shades layout
 
+void swirls() {
+  static boolean erase = false;
+  static uint8_t x, y, z = 0;
+  static uint8_t currentColor = 0;
+  //startup tasks
+  if (effectInit == false) {
+    effectInit = true;
+    erase = false;
+    x = 0;
+    y = 0;
+    z = 0;
+    effectDelay = 15;
+    FastLED.clear(); 
+    currentPalette = RainbowColors_p; 
+  }
+  
+  const uint8_t OutlineTable[] = {
+    6,5,4,3,2,1,0,29,30,57,58,59,60,61,62,51,36,22,23,24,25,26,27,28,31,56,55,54,53,52,35,34,33,32,31
+  };
+  const uint8_t OutlineTable2[] = {
+    7,8,9,10,11,12,13,14,43,44,67,66,65,64,63,50,37,21,20,19,18,17,16,15,42,45,46,47,48,49,38,39,40,41
+  };
+  
+  leds[OutlineTable[x]] = currentPalette[currentColor];
+  leds[OutlineTable2[y]] = currentPalette[currentColor];
+  if (erase)    
+    leds[OutlineTable[x]] = currentPalette[currentColor];
+    leds[OutlineTable2[y]] = currentPalette[currentColor];
+  x++;
+  y++;
+  if (x == (sizeof(OutlineTable)) || y == (sizeof(OutlineTable2))) {
+    erase = !erase;
+    x = 0; 
+    y = 0;
+    currentColor += random8(3, 6);
+     if (currentColor > 15) currentColor -= 16;
+  }
+}
+
 // Triple Sine Waves
 byte sineOffset = 0; // counter for current position of sine waves
 void threeSine() {

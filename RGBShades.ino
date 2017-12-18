@@ -56,7 +56,8 @@ void setup() {
 }
 
 // list of functions that will be displayed
-functionList effectList[] = {threeSine,
+functionList effectList[] = {swirls,
+                             threeSine,
                              threeDee,
                              scrollTextOne,
                              plasma,
