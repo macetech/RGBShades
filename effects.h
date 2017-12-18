@@ -6,6 +6,18 @@
 //    * All animation should be controlled with counters and effectDelay, no delay() or loops
 //    * Pixel data should be written using leds[XY(x,y)] to map coordinates to the RGB Shades layout
 
+// Hue Rotation
+void hueRotation() {
+
+  // startup tasks
+  if (effectInit == false) {
+    effectInit = true;
+    effectDelay = 60; 
+  }
+
+  fillAll(CHSV(cycleHue, 255, 255));
+}
+
 // Triple Sine Waves
 byte sineOffset = 0; // counter for current position of sine waves
 void threeSine() {
