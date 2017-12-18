@@ -32,18 +32,6 @@ void radiateCenter() {
   plasVector += 1; // using an int for slower orbit (wraps at 65536)
 }
 
-// Hue Rotation
-void hueRotation() {
-
-  // startup tasks
-  if (effectInit == false) {
-    effectInit = true;
-    effectDelay = 5; 
-  }
-
-  fillAll(CHSV(cycleHue, 255, 255));
-}
-
 // Triple Sine Waves
 byte sineOffset = 0; // counter for current position of sine waves
 void threeSine() {

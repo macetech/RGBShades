@@ -57,7 +57,6 @@ void setup() {
 
 // list of functions that will be displayed
 functionList effectList[] = {radiateCenter,
-                             hueRotation,
                              threeSine,
                              threeDee,
                              scrollTextOne,
