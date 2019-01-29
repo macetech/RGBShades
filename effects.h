@@ -315,7 +315,6 @@ void scrollText(byte message, byte style, CRGB fgColor, CRGB bgColor) {
 
 }
 
-
 void scrollTextZero() {
   scrollText(0, NORMAL, CRGB::Red, CRGB::Black);
 }
@@ -326,5 +325,39 @@ void scrollTextOne() {
 
 void scrollTextTwo() {
   scrollText(2, NORMAL, CRGB::Green, CRGB(0,0,8));
+}
+
+void graphicsFrame(int frame){
+  // Buffers for graphics generation
+  byte GlassesBits[kMatrixWidth][kMatrixHeight] = {{0}};    // 24 column x 8 row bit arrays (on/off frame)
+  int currentFrameAddress = pgm_read_word(&frameArray[frame]);
+  
+  // startup tasks
+  if (effectInit == false) {
+    effectInit = true;
+    effectDelay = 5;
+  }
+
+
+  for (byte x = 0; x < kMatrixWidth; x++) {
+    for (byte y = 0; y < kMatrixHeight; y++) {
+      GlassesBits[x][y] = pgm_read_byte(currentFrameAddress+x+kMatrixWidth*y);
+      if (GlassesBits[x][y] == 1) leds[XY(x, y)] = CRGB::White;
+      else leds[XY(x,y)] = CRGB::Black;
+    }
+  }
+}
+
+void eyesAnim(){
+  static byte frameSeq[] = {0,1,0,1,2,3,2,3};
+  static byte frameIndex = 0;
+  // startup tasks
+  if (effectInit == false) {
+    effectInit = true;
+    effectDelay = 300;
+  }
+  graphicsFrame(frameSeq[frameIndex]);
+  frameIndex++;
+  frameIndex=frameIndex%8;
 }
 
