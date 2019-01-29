@@ -54,6 +54,7 @@
 #include <FastLED.h>
 #include <EEPROM.h>
 #include "messages.h"
+#include "graphicsframe.h"
 #include "font.h"
 #include "XYmap.h"
 #include "utils.h"
@@ -73,7 +74,8 @@ functionList effectList[] = {threeSine,
                              slantBars,
                              scrollTextTwo,
                              colorFill,
-                             sideRain
+                             sideRain,
+                             eyesAnim
                             };
 
 const byte numEffects = (sizeof(effectList)/sizeof(effectList[0]));
