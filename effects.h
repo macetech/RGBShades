@@ -327,7 +327,7 @@ void scrollTextTwo() {
   scrollText(2, NORMAL, CRGB::Green, CRGB(0,0,8));
 }
 
-void graphicsFrame(int frame){
+void graphicsFrame(int frame, CRGB fgColor,CRGB bgColor){
   // Buffers for graphics generation
   byte GlassesBits[kMatrixWidth][kMatrixHeight] = {{0}};    // 24 column x 8 row bit arrays (on/off frame)
   int currentFrameAddress = pgm_read_word(&frameArray[frame]);
@@ -342,22 +342,32 @@ void graphicsFrame(int frame){
   for (byte x = 0; x < kMatrixWidth; x++) {
     for (byte y = 0; y < kMatrixHeight; y++) {
       GlassesBits[x][y] = pgm_read_byte(currentFrameAddress+x+kMatrixWidth*y);
-      if (GlassesBits[x][y] == 1) leds[XY(x, y)] = CRGB::White;
-      else leds[XY(x,y)] = CRGB::Black;
+      if (GlassesBits[x][y] == 1) leds[XY(x, y)] = fgColor;
+      else leds[XY(x,y)] = bgColor;
     }
   }
 }
 
 void eyesAnim(){
-  static byte frameSeq[] = {0,1,0,1,2,3,2,3};
+  static byte frameSeq[] = {0,2,1,2,0,2,3,2,3,2};
   static byte frameIndex = 0;
+  static unsigned long lastFrame=0;
+  const byte frameDelay=500;
+  
   // startup tasks
   if (effectInit == false) {
     effectInit = true;
-    effectDelay = 300;
+    effectDelay = 5;
   }
-  graphicsFrame(frameSeq[frameIndex]);
-  frameIndex++;
-  frameIndex=frameIndex%8;
+  
+  if (millis() > lastFrame+frameDelay) {
+    frameIndex++;
+    frameIndex=frameIndex%10;
+    lastFrame=millis();
+  }
+  
+  CRGB fgColor = CHSV(cycleHue, 255, 255); 
+  //CRGB bgColor = CHSV(cycleHue+128, 255, 255); 
+  graphicsFrame(frameSeq[frameIndex],fgColor,CRGB::Black);
 }
 
