@@ -37,66 +37,73 @@
 #define COLOR_ORDER GRB
 #define CHIPSET     WS2811
 
-// Global maximum brightness value, maximum 255
-#define MAXBRIGHTNESS 72
-#define STARTBRIGHTNESS 102
-
-// Cycle time (milliseconds between pattern changes)
-#define cycleTime 15000
-
-// Hue time (milliseconds between hue increments)
-#define hueTime 30
-
-// Time after changing settings before settings are saved to EEPROM
-#define EEPROMDELAY 2000
-
-// Include FastLED library and other useful files
 #include <FastLED.h>
 #include <EEPROM.h>
-#include "messages.h"
-#include "font.h"
+
 #include "XYmap.h"
 #include "utils.h"
 #include "effects.h"
 #include "buttons.h"
+#include "messages.h"
+#include "serialcomms.h"
 
+Message text1;
 
-// list of functions that will be displayed
-functionList effectList[] = {threeSine,
-                             threeDee,
-                             scrollTextZero,
-                             plasma,
-                             confetti,
-                             rider,
-                             scrollTextOne,
-                             glitter,
-                             slantBars,
-                             scrollTextTwo,
-                             colorFill,
-                             sideRain
-                            };
+Effect * Effects[] = {
+  &text1,
+  new Plasma,
+  new Rider,
+  new ThreeSine,
+  &text1,
+  new Glitter,
+  new ColorFill,
+  new ThreeDee,
+  new SideRain,
+  &text1,
+  new Confetti,
+  new SlantBars,
+  new ShadesOutline,
+  //new NoiseFlyer
+};
 
-const byte numEffects = (sizeof(effectList)/sizeof(effectList[0]));
+struct SystemState systemstate;
+struct SystemState * Effect::state = &systemstate;
+struct Timers timers;
+
+void set_serial_active(bool isActive) {
+  if (isActive) systemstate.serialActive = true;
+}
+
+bool get_serial_active(void) {
+  return systemstate.serialActive;
+}
+
 
 // Runs one time at the start of the program (power up or reset)
 void setup() {
+
+  // Initialize number of loaded effects
+  systemstate.numEffects = (sizeof(Effects)/sizeof(Effects[0]));
+
+  Serial.begin(9600);
 
   // check to see if EEPROM has been used yet
   // if so, load the stored settings
   byte eepromWasWritten = EEPROM.read(0);
   if (eepromWasWritten == 99) {
-    currentEffect = EEPROM.read(1);
-    autoCycle = EEPROM.read(2);
-    currentBrightness = EEPROM.read(3);
+    systemstate.currentEffect = EEPROM.read(1);
+    systemstate.autoCycle = EEPROM.read(2);
+    systemstate.currentBrightness = EEPROM.read(3);
   }
 
-  if (currentEffect > (numEffects - 1)) currentEffect = 0;
+  if (systemstate.currentEffect > (systemstate.numEffects - 1)) systemstate.currentEffect = 0;
 
   // write FastLED configuration data
   FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, LAST_VISIBLE_LED + 1);
 
   // set global brightness value
-  FastLED.setBrightness( scale8(currentBrightness, MAXBRIGHTNESS) );
+  FastLED.setBrightness( scale8(systemstate.currentBrightness, MAXBRIGHTNESS) );
+  FastLED.setDither(0);
 
   // configure input buttons
   pinMode(MODEBUTTON, INPUT_PULLUP);
@@ -104,43 +111,54 @@ void setup() {
 
 }
 
-
 // Runs over and over until power off or reset
 void loop()
 {
-  currentMillis = millis(); // save the current timer value
-  updateButtons();          // read, debounce, and process the buttons
-  doButtons();              // perform actions based on button state
-  checkEEPROM();            // update the EEPROM if necessary
+  process_serial();
+
+  timers.current = millis(); // save the current timer value
+  updateButtons(&timers);          // read, debounce, and process the buttons
+  doButtons(&timers, &systemstate);              // perform actions based on button state
+  checkEEPROM(&timers, &systemstate);            // update the EEPROM if necessary
+
+  Effect *effect;
+  if (get_serial_active()) {
+    systemstate.autoCycle = false;
+    effect = &text1;
+  } else {
+    effect = Effects[systemstate.currentEffect];
+  }
+
+
 
   // switch to a new effect every cycleTime milliseconds
-  if (currentMillis - cycleMillis > cycleTime && autoCycle == true) {
-    cycleMillis = currentMillis;
-    if (++currentEffect >= numEffects) currentEffect = 0; // loop to start of effect list
-    effectInit = false; // trigger effect initialization when new effect is selected
+  if (timers.current - timers.cycle > cycleTime && systemstate.autoCycle == true) {
+    timers.cycle = timers.current;
+    if (++systemstate.currentEffect >= systemstate.numEffects) systemstate.currentEffect = 0; // loop to start of effect list
+    systemstate.effectInit = false;
   }
 
   // increment the global hue value every hueTime milliseconds
-  if (currentMillis - hueMillis > hueTime) {
-    hueMillis = currentMillis;
-    hueCycle(1); // increment the global hue value
+  if (timers.current - timers.hue > hueTime) {
+    timers.hue = timers.current;
+    hueCycle(1, &systemstate); // increment the global hue value
+  }
+
+  // Control fading effect if active
+  if (timers.current - timers.fade > 1) {
+        timers.fade = timers.current;
+        fadeAll(effect->fade);
   }
 
   // run the currently selected effect every effectDelay milliseconds
-  if (currentMillis - effectMillis > effectDelay) {
-    effectMillis = currentMillis;
-    effectList[currentEffect](); // run the selected effect function
+  if (timers.current - timers.effect > effect->delayMillis) {
+    timers.effect = timers.current;
+    if (systemstate.effectInit == false) effect->init();
+    effect->render();    
     random16_add_entropy(1); // make the random values a bit more random-ish
   }
 
-  // run a fade effect too if the confetti effect is running
-  if (effectList[currentEffect] == confetti) fadeAll(1);
 
   FastLED.show(); // send the contents of the led memory to the LEDs
 
 }
-
-
-
-
-
