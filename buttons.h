@@ -16,9 +16,7 @@
 #define BTNDEBOUNCETIME 20
 #define BTNLONGPRESSTIME 1000
 
-
 extern boolean autoCycle;
 
 void updateButtons(struct Timers *timers);
-byte buttonStatus(byte buttonNum);
 void doButtons(struct Timers *timers, struct SystemState *state);

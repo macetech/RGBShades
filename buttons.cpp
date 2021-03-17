@@ -1,11 +1,11 @@
 #include "buttons.h"
 #include "utils.h"
 
-unsigned long buttonEvents[NUMBUTTONS];
-byte buttonStatuses[NUMBUTTONS];
-byte buttonmap[NUMBUTTONS] = {BRIGHTNESSBUTTON, MODEBUTTON};
+static unsigned long buttonEvents[NUMBUTTONS];
+static byte buttonStatuses[NUMBUTTONS];
+static byte buttonmap[NUMBUTTONS] = {BRIGHTNESSBUTTON, MODEBUTTON};
 
-void updateButtons(struct Timers *timers) {
+static void updateButtons(struct Timers *timers) {
   for (byte i = 0; i < NUMBUTTONS; i++) {
     switch (buttonStatuses[i]) {
       case BTNIDLE:
@@ -46,7 +46,7 @@ void updateButtons(struct Timers *timers) {
   }
 }
 
-byte buttonStatus(byte buttonNum) {
+static byte buttonStatus(byte buttonNum) {
 
   byte tempStatus = buttonStatuses[buttonNum];
   if (tempStatus == BTNRELEASED) {
@@ -60,6 +60,8 @@ byte buttonStatus(byte buttonNum) {
 }
 
 void doButtons(struct Timers *timers, struct SystemState *state) {
+
+  updateButtons(timers);
   
   // Check the mode button (for switching between effects)
   switch (buttonStatus(0)) {

@@ -2,12 +2,12 @@
 #include "FastLED.h"
 #include "messages.h"
 
-#define FW_VERSION_STRING "{fw:1.0.0}"
+#define FW_VERSION_STRING F("{fw:1.0.0}")
 
 
 extern Message text1;
 
-enum data_char_result validate_data_char(char temp_char) {
+static enum data_char_result validate_data_char(char temp_char) {
   if ((temp_char >= 32 && temp_char <= 122)) {
     return VALID;
   } else if (temp_char == '|') {
@@ -38,7 +38,7 @@ static uint32_t CRGB_to_uint32(CRGB crgb) {
   return ret;
 }
 
-void transmit_message(Message * msg) {
+static void transmit_message(Message * msg) {
   // Instead of constructing a big snprintf buffer, just save the RAM and do it the naive way with a bunch of transmits
   char fieldbuf[16] = {0};
 
@@ -76,7 +76,7 @@ void transmit_message(Message * msg) {
   
 }
 
-void transmit_fw_version(void) {
+static void transmit_fw_version(void) {
   Serial.println(FW_VERSION_STRING);
 }
 

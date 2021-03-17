@@ -153,7 +153,7 @@ class Message : public Effect {
         curr_msg_info.reps = -1;
         curr_msg_info.run_interval = 35;
         curr_msg_info.fgcolor = 0xFF0000;
-        put_message("YOUR MESSAGE HERE  ");
+        put_message((char*)F("YOUR MESSAGE HERE  "));
         save_message(next_empty_slot);
         update_msg_list();
         if (next_empty_slot == 255) {

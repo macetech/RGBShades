@@ -1,22 +1,10 @@
 //   RGB Shades Demo Code
-//   Copyright (c) 2015 macetech LLC
+//   Copyright (c) 2021 macetech LLC
 //   This software is provided under the MIT License (see license.txt)
 //   Special credit to Mark Kriegsman for XY mapping code
 //
 //   Use Version 3.0 or later https://github.com/FastLED/FastLED
 //   ZIP file https://github.com/FastLED/FastLED/archive/master.zip
-//
-//   Use Arduino IDE 1.0 or later
-//
-//   If your RGB Shades were purchased before July 2015:
-//     This version has the standard Arduino bootloader. R9 and R10 near the control buttons will be present.
-//     Select the “Arduino Pro or Pro Mini” option.
-//     Then, go back into the Tools menu and find the Processor option and select “ATmega328 (5V, 16MHz)”.
-//
-//   If your RGB Shades were purchased after July 2015:
-//     This version has the Optiboot bootloader. R9 and 10 near the control buttons will be missing.
-//     Select the “Arduino Mini” option.
-//     Then, go back into the Tools menu and find the Processor option and select “ATmega328”.
 //
 //   [Press] the SW1 button to cycle through available effects
 //   [Press and hold] the SW1 button (one second) to switch between auto and manual mode
@@ -70,16 +58,6 @@ struct SystemState systemstate;
 struct SystemState * Effect::state = &systemstate;
 struct Timers timers;
 
-void set_serial_active(bool isActive) {
-  if (isActive) systemstate.serialActive = true;
-}
-
-bool get_serial_active(void) {
-  return systemstate.serialActive;
-}
-
-
-// Runs one time at the start of the program (power up or reset)
 void setup() {
 
   // Initialize number of loaded effects
@@ -111,16 +89,16 @@ void setup() {
 
 }
 
-// Runs over and over until power off or reset
 void loop()
 {
+  // Check for Web Serial text editing functions
   process_serial();
 
   timers.current = millis(); // save the current timer value
-  updateButtons(&timers);          // read, debounce, and process the buttons
   doButtons(&timers, &systemstate);              // perform actions based on button state
   checkEEPROM(&timers, &systemstate);            // update the EEPROM if necessary
 
+  // If serial control detected, only display text scroll
   Effect *effect;
   if (get_serial_active()) {
     systemstate.autoCycle = false;
@@ -128,8 +106,6 @@ void loop()
   } else {
     effect = Effects[systemstate.currentEffect];
   }
-
-
 
   // switch to a new effect every cycleTime milliseconds
   if (timers.current - timers.cycle > cycleTime && systemstate.autoCycle == true) {

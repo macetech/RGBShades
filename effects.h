@@ -16,7 +16,7 @@ class Effect {
     Effect() {};
   public:
     bool initialized;
-    int delayMillis;
+    uint16_t delayMillis;
     int fade;
     bool done;
     static SystemState *state;

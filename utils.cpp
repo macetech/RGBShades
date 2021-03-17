@@ -1,15 +1,13 @@
-
+// Assorted useful functions and variables
 #include "utils.h"
 #include <FastLED.h>
 #include "XYmap.h"
 #include "Arduino.h"
 #include <EEPROM.h>
 
+// Globals
 extern boolean autoCycle;
-
-// Assorted useful functions and variables
-
-
+extern SystemState systemstate;
 
 // Increment the global hue value for functions that use it
 void hueCycle(byte incr, struct SystemState *state ) {
@@ -47,7 +45,6 @@ void scrollArray(byte scrollDir) {
     }
   
 }
-
 
 // Pick a random palette from a list
 void selectRandomPalette(struct SystemState *state) {
@@ -187,5 +184,10 @@ void checkEEPROM(struct Timers *timers, struct SystemState *state) {
     }
   }
 }
+void set_serial_active(bool isActive) {
+  if (isActive) systemstate.serialActive = true;
+}
 
-void set_serial_active(bool isActive);
+bool get_serial_active(void) {
+  return systemstate.serialActive;
+}
